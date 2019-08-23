@@ -3,7 +3,7 @@
 
 改系统使用了smm框架，数据库使用mysql
 
-部署完成前台页面是：http://localhost:8080
+部署完成前台页面是：http://localhost:8080/base-server
 
 后台管理页面是：http://localhost:8080/base-server/a/login
 
