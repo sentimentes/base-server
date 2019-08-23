@@ -1,7 +1,9 @@
-# Windows-specific files that require CRLF:
-*.bat       eol=crlf
-*.txt		eol=crlf
-
-# Unix-specific files that require LF:
-*.java		eol=lf
-*.sh		eol=lf
+*.md linguist-language=Java 
+*.yml linguist-language=Java 
+*.html linguist-language=Java 
+*.js linguist-language=Java 
+*.xml linguist-language=Java
+*.css linguist-language=Java 
+*.sql linguist-language=Java
+*.uml linguist-language=Java 
+*.cmd linguist-language=Java
