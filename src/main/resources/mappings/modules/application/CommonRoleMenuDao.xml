@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.application.dao.CommonRoleMenuDao">
+    
+	<sql id="commonRoleMenuColumns">
+		a.id AS "id",
+		a.role_id AS "roleId",
+		a.menu_id AS "menuId",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remark AS "remark",
+	 	a.del_flag AS "delFlag"
+	</sql>
+	
+		<!-- 增加的sql -->
+	<sql id="commonRoleMenuColumnSimpleColumns">
+		a.id AS "id",
+		a.role_id AS "roleId",
+		a.menu_id AS "menuId",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remark AS "remark",
+		a.del_flag AS "delFlag",
+		m.name     AS  "commonMenu.name",
+		m.id       AS   "commonMenu.id"
+	</sql>
+	
+	
+	<sql id="commonRoleMenuJoins">
+	</sql>
+	<!-- 增加的sql  -->
+	  <sql id="commonMenuRoleSimpleJoins">
+	 INNER JOIN  common_role r on r.id = a.role_id
+	 INNER JOIN  common_menu m on a.menu_id=m.id
+	</sql>
+	
+	
+	<select id="get" resultType="CommonRoleMenu">
+		SELECT 
+			<include refid="commonRoleMenuColumns"/>
+		FROM common_role_menu a
+		<include refid="commonRoleMenuJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="CommonRoleMenu">
+		SELECT 
+			<include refid="commonRoleMenuColumns"/>
+		FROM common_role_menu a
+		<include refid="commonRoleMenuJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="roleId != null   and roleId!= ''">
+				AND  a.role_id = #{roleId}
+			</if>
+		
+		</where>
+		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 查询某角色已经分配的菜单列表 -->
+	<select id="findAlreadyList" resultType="CommonRoleMenu">
+		SELECT 
+			<include refid="commonRoleMenuColumnSimpleColumns"/>
+		FROM common_role_menu a
+		<include refid="commonMenuRoleSimpleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="roleId != null   and roleId!= ''">
+			 AND a.role_id = #{roleId}
+			</if>
+			<if test="commonMenu != null and commonMenu.name!=null and commonMenu.name != ''">
+				AND m.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{commonMenu.name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{commonMenu.name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{commonMenu.name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+		
+ 
+	
+	<select id="findAllList" resultType="CommonRoleMenu">
+		SELECT 
+			<include refid="commonRoleMenuColumns"/>
+		FROM common_role_menu a
+		<include refid="commonRoleMenuJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO common_role_menu(
+			id,
+			role_id,
+			menu_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remark,
+			del_flag
+		) VALUES (
+			#{id},
+			#{roleId},
+			#{menuId},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remark},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE common_role_menu SET 	
+			role_id = #{roleId},
+			menu_id = #{menuId},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remark = #{remark}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE common_role_menu SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

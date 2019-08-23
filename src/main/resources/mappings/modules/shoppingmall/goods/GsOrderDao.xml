@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.shoppingmall.dao.goods.GsOrderDao">
+    
+	<sql id="gsOrderColumns">
+		a.id AS "id",
+		a.gs_id AS "gsId",
+		a.address_id AS "addressId",
+		a.logistics_name AS "logisticsName",
+		a.price AS "price",
+		a.office_id AS "office.id",
+		a.up_down_shelf AS "upDownShelf",
+		a.sort AS "sort",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.parameter AS "parameter",
+		a.number AS "gsNumber",
+		a.trade_no AS "tradeNo",
+		o6.name AS "office.name"
+	</sql>
+	
+	<sql id="ggsOrderColumns">
+		a.id AS "id",
+		a.gs_id AS "gsId",
+		a.address_id AS "addressId",
+		a.logistics_name AS "logisticsName",
+		a.price AS "price",
+		a.office_id AS "office.id",
+		a.up_down_shelf AS "upDownShelf",
+		a.sort AS "sort",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.parameter AS "parameter",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		b.name AS "gsName",
+		a.number AS "gsNumber",
+		b.number  AS "number",
+		b.image AS "image",
+		c.phone AS "phone",
+		c.name AS "pepole",
+		c.up_down_shelf AS "addressName",
+		a.trade_no AS "tradeNo",
+		o6.name AS "office.name"
+	</sql>
+	
+	<sql id="gsOrderJoins">
+		LEFT JOIN sys_office o6 ON o6.id = a.office_id
+	</sql>
+	
+	<sql id="ggsOrderJoins">
+		LEFT JOIN gs_goods b ON b.id = a.gs_id
+	</sql>
+	
+	<sql id="gggsOrderJoins">
+		LEFT JOIN gs_address c ON c.id = a.address_id
+	</sql>
+    
+	<select id="get" resultType="GsOrder">
+		SELECT 
+			<include refid="gsOrderColumns"/>
+		FROM gs_order a
+		<include refid="gsOrderJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GsOrder">
+		SELECT 
+			<include refid="ggsOrderColumns"/>
+		FROM gs_order a
+		<include refid="gsOrderJoins"/>
+		<include refid="ggsOrderJoins"/>
+		<include refid="gggsOrderJoins"/>
+		<where>
+			a.del_flag = '0'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="gsName != null and gsName != ''">
+				AND b.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{gsName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{gsName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{gsName},'%')</if>
+			</if>
+			<if test="orderId != null and orderId != ''">
+				AND a.create_by = #{orderId}	
+			</if>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date DESC,a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GsOrder">
+		SELECT 
+			<include refid="ggsOrderColumns"/>
+		FROM gs_order a
+		<include refid="gsOrderJoins"/>
+		<include refid="ggsOrderJoins"/>
+		<include refid="gggsOrderJoins"/>
+		<where>
+				a.del_flag = '0' and up_down_shelf = '1'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="gsName != null and gsName != ''">
+				AND b.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{gsName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{gsName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{gsName},'%')</if>
+			</if>
+			<if test="orderId != null and orderId != ''">
+				AND a.id = #{orderId}	
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC,a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO gs_order(
+			id,
+			gs_id,
+			address_id,
+			logistics_name,
+			price,
+			office_id,
+			up_down_shelf,
+			sort,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			number,
+			parameter,
+			update_date
+		) VALUES (
+			#{id},
+			#{gsId},
+			#{addressId},
+			#{logisticsName},
+			#{price},
+			#{office.id},
+			#{upDownShelf},
+			#{sort},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{gsNumber},
+			#{parameter},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE gs_order SET 	
+			gs_id = #{gsId},
+			address_id = #{addressId},
+			logistics_name = #{logisticsName},
+			price = #{price},
+			office_id = #{office.id},
+			sort = #{sort},
+			parameter = #{parameter},
+			number =  #{gsNumber},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE gs_order SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateStatus">
+		UPDATE gs_order SET 
+			up_down_shelf = #{upDownShelf},
+			trade_no = #{tradeNo}
+		WHERE id = #{orderId}
+	</update>
+	
+	<update id="takeh">
+		UPDATE gs_order SET 
+			up_down_shelf = '2'
+		WHERE id = #{id}
+	</update>
+	<update id="shouh">
+		UPDATE gs_order SET 
+			up_down_shelf = '3'
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getjf" resultType="java.lang.Integer">
+		SELECT 
+			sum(price)
+		FROM gs_order a
+		<include refid="gsOrderJoins"/>
+		<where>
+		and a.del_flag = '0' and up_down_shelf != '0'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="pepole != null and pepole != ''">
+				AND a.create_by = #{pepole}
+			</if>
+		</where>
+		</select>
+	
+</mapper>

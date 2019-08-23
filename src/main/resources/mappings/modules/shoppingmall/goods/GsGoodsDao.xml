@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.shoppingmall.dao.goods.GsGoodsDao">
+    
+	<sql id="gsGoodsColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.image AS "image",
+		a.price AS "price",
+		a.sale_price AS "salePrice",
+		a.prefeential_info AS "prefeentialInfo",
+		a.sales_volume AS "salesVolume",
+		a.number AS "number",
+		a.details AS "details",
+		a.office_id AS "office.id",
+		a.up_down_shelf AS "upDownShelf",
+		a.sort AS "sort",
+		a.del_flag AS "delFlag",
+		a.menu_id AS "menuId",
+		b.sp_type1  AS "menuName",
+		o10.name AS "office.name"
+	</sql>
+	
+	<sql id="gsGoodsJoins">
+		LEFT JOIN sys_office o10 ON o10.id = a.office_id
+	</sql>
+	<sql id="ggsGoodsJoins">
+		LEFT JOIN gs_menu b ON b.id = a.menu_id
+	</sql>
+    
+	<select id="get" resultType="GsGoods">
+		SELECT 
+			<include refid="gsGoodsColumns"/>
+		FROM gs_goods a
+		<include refid="gsGoodsJoins"/>
+		<include refid="ggsGoodsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GsGoods">
+		SELECT 
+			<include refid="gsGoodsColumns"/>
+		FROM gs_goods a
+		<include refid="gsGoodsJoins"/>
+		<include refid="ggsGoodsJoins"/>
+		<where>
+			a.del_flag = '0'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="menuId != null and menuId != ''">
+				AND a.menu_id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{menuId}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{menuId}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{menuId},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			ORDER BY a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GsGoods">
+		SELECT 
+			<include refid="gsGoodsColumns"/>
+			
+		FROM gs_goods a
+		<include refid="gsGoodsJoins"/>
+		<include refid="ggsGoodsJoins"/>
+		<where>
+				a.del_flag = '0' and a.up_down_shelf = '1'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND (a.name LIKE concat('%',#{name},'%') or b.sp_type1 LIKE concat('%',#{name},'%'))
+			</if>
+			<if test="menuId != null and menuId != ''">
+				AND a.menu_id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{menuId}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{menuId}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{menuId},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			ORDER BY a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO gs_goods(
+			id,
+			name,
+			image,
+			price,
+			sale_price,
+			prefeential_info,
+			sales_volume,
+			number,
+			details,
+			office_id,
+			menu_id,
+			up_down_shelf,
+			sort,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{image},
+			#{price},
+			#{salePrice},
+			#{prefeentialInfo},
+			#{salesVolume},
+			#{number},
+			#{details},
+			#{office.id},
+			#{menuId},
+			#{upDownShelf},
+			#{sort},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE gs_goods SET 	
+			name = #{name},
+			image = #{image},
+			price = #{price},
+			menu_id = #{menuId},
+			sale_price = #{salePrice},
+			prefeential_info = #{prefeentialInfo},
+			sales_volume = #{salesVolume},
+			number = #{number},
+			details = #{details},
+			office_id = #{office.id},
+			up_down_shelf = #{upDownShelf},
+			sort = #{sort}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE gs_goods SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 批量上下架 -->
+	<update id="upDownShelf">
+		UPDATE gs_goods 
+		SET up_down_shelf = #{upDownShelf}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 批量修改排序 -->
+	<update id="updateSort">
+		UPDATE gs_goods 
+		SET sort = #{sort}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

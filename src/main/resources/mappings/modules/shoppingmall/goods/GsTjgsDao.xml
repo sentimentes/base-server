@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.shoppingmall.dao.goods.GsTjgsDao">
+    
+	<sql id="gsTjgsColumns">
+		a.id AS "id",
+		a.gs_id AS "gsId",
+		a.tjgs_id AS "tjgsId",
+		a.office_id AS "office.id",
+		a.del_flag AS "delFlag",
+		o4.name AS "office.name"
+	</sql>
+	
+	<sql id="ggsTjgsColumns">
+		a.id AS "id",
+		a.gs_id AS "gsId",
+		b.name AS "gsName",
+		a.tjgs_id AS "tjgsId",
+		a.office_id AS "office.id",
+		a.del_flag AS "delFlag",
+		o4.name AS "office.name"
+	</sql>
+	
+	<sql id="gggsTjgsColumns">
+		a.id AS "id",
+		a.gs_id AS "gsId",
+		b.image AS "image",
+		b.price AS "price",
+		b.sale_price AS "salePrice",
+		b.name AS "gsName",
+		a.tjgs_id AS "tjgsId",
+		a.office_id AS "office.id",
+		a.del_flag AS "delFlag",
+		o4.name AS "office.name"
+	</sql>
+	<sql id="gsTjgsJoins">
+		LEFT JOIN sys_office o4 ON o4.id = a.office_id
+	</sql>
+	
+	<sql id="ggsTjgsJoins">
+		LEFT JOIN gs_goods b ON b.id = a.gs_id
+	</sql>
+    
+	<select id="get" resultType="GsTjgs">
+		SELECT 
+			<include refid="gsTjgsColumns"/>
+		FROM gs_tjgs a
+		<include refid="gsTjgsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GsTjgs">
+		SELECT 
+			<include refid="ggsTjgsColumns"/>
+		FROM gs_tjgs a
+		<include refid="gsTjgsJoins"/>
+		<include refid="ggsTjgsJoins"/>
+		<where>
+			a.del_flag = '0'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="tjgsId != null and tjgsId != ''">
+				AND a.tjgs_id = #{tjgsId}
+			</if>
+			<if test="gsId != null and gsId != ''">
+				AND a.gs_id = #{gsId}
+			</if>
+			<if test="gsName != null and gsName != ''">
+				AND b.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{gsName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{gsName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{gsName},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GsTjgs">
+		SELECT 
+			<include refid="gsTjgsColumns"/>
+		FROM gs_tjgs a
+		<include refid="gsTjgsJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="getgslist" resultType="GsTjgs">
+		SELECT 
+			<include refid="gggsTjgsColumns"/>
+		FROM gs_tjgs a
+		<include refid="gsTjgsJoins"/>
+		<include refid="ggsTjgsJoins"/>
+		<where>
+			a.del_flag = '0' and b.up_down_shelf = '1'
+			<if test="tjgsId != null and tjgsId != ''">
+				AND a.tjgs_id = #{tjgsId}
+			</if>
+			<if test="gsMenuId != null and gsMenuId != ''">
+				AND b.menu_id = #{gsMenuId}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO gs_tjgs(
+			id,
+			gs_id,
+			tjgs_id,
+			office_id,
+			del_flag
+		) VALUES (
+			#{id},
+			#{gsId},
+			#{tjgsId},
+			#{office.id},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE gs_tjgs SET 	
+			gs_id = #{gsId},
+			tjgs_id = #{tjgsId},
+			office_id = #{office.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE gs_tjgs SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

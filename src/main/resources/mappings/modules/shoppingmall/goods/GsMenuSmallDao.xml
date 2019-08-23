@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.shoppingmall.dao.goods.GsMenuSmallDao">
+    
+	<sql id="gsMenuSmallColumns">
+		a.id AS "id",
+		a.gs_menu_id AS "gsMenuId",
+		a.name AS "name",
+		a.office_id AS "office.id",
+		a.sort AS "sort",
+		a.up_down_shelf AS "upDownShelf",
+		a.del_flag AS "delFlag",
+		o4.name AS "office.name"
+	</sql>
+	
+		<sql id="ggsMenuSmallColumns">
+		a.id AS "id",
+		a.gs_menu_id AS "gsMenuId",
+		a.name AS "name",
+		a.office_id AS "office.id",
+		a.sort AS "sort",
+		a.up_down_shelf AS "upDownShelf",
+		a.del_flag AS "delFlag",
+		b.sp_type1 AS "gsMenuName",
+		o4.name AS "office.name"
+	</sql>
+	
+	<sql id="gsMenuSmallJoins">
+		LEFT JOIN sys_office o4 ON o4.id = a.office_id
+	</sql>
+	
+	<sql id="ggsMenuSmallJoins">
+		LEFT JOIN gs_menu b ON b.id = a.gs_menu_id
+	</sql>
+    
+	<select id="get" resultType="GsMenuSmall">
+		SELECT 
+			<include refid="gsMenuSmallColumns"/>
+		FROM gs_menu_small a
+		<include refid="gsMenuSmallJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GsMenuSmall">
+		SELECT 
+			<include refid="ggsMenuSmallColumns"/>
+		FROM gs_menu_small a
+		<include refid="gsMenuSmallJoins"/>
+		<include refid="ggsMenuSmallJoins"/>
+		<where>
+			a.del_flag = '0'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="gsMenuId != null and gsMenuId != ''">
+				AND a.gs_menu_id=#{gsMenuId}
+			</if>
+			<if test="gsMenuName != null and gsMenuName != ''">
+				AND b.sp_type1 = #{gsMenuName}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GsMenuSmall">
+		SELECT 
+			<include refid="ggsMenuSmallColumns"/>
+		FROM gs_menu_small a
+		<include refid="gsMenuSmallJoins"/>
+		<include refid="ggsMenuSmallJoins"/>
+		<where>
+				a.del_flag = '0' and a.up_down_shelf = '1'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="gsMenuName != null and gsMenuName != ''">
+				AND b.sp_type1 = #{gsMenuName}
+			</if>
+			<if test="gsMenuId != null and gsMenuId != ''">
+				AND a.gs_menu_id=#{gsMenuId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO gs_menu_small(
+			id,
+			gs_menu_id,
+			name,
+			office_id,
+			sort,
+			up_down_shelf,
+			del_flag
+		) VALUES (
+			#{id},
+			#{gsMenuId},
+			#{name},
+			#{office.id},
+			#{sort},
+			#{upDownShelf},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE gs_menu_small SET 	
+			gs_menu_id = #{gsMenuId},
+			name = #{name},
+			office_id = #{office.id},
+			sort = #{sort},
+			up_down_shelf = #{upDownShelf}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE gs_menu_small SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 批量上下架 -->
+	<update id="upDownShelf">
+		UPDATE gs_menu_small 
+		SET up_down_shelf = #{upDownShelf}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 批量修改排序 -->
+	<update id="updateSort">
+		UPDATE gs_menu_small 
+		SET sort = #{sort}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

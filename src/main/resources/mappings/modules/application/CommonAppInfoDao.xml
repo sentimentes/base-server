@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.application.dao.CommonAppInfoDao">
+    
+	<sql id="commonAppInfoColumns">
+		a.id AS "id",
+		a.secret_key AS "secretKey",
+		a.key_version AS "keyVersion",
+		a.name AS "name",
+		a.shop_id AS "shopId",
+		a.shop_id AS  "officeId",
+		a.shop_id AS   "office.id",
+		a.client_id AS "clientId",
+		a.msg_clientid AS "msgClientid",
+		a.bundleIdentifier AS "bundleIdentifier",
+		a.msg_first AS "msgFirst",
+		a.msg_last AS  "msgLast",
+		a.msg_template AS "msgTemplate",
+		a.app_image AS "appImage",
+		a.is_integral AS "isIntegral",
+		a.wx_appid    AS  "wxAppId",
+        a.wx_app_secret AS "wxAppSecret",
+        a.wx_token      AS "wxToken",
+        a.wx_aes_key    AS "wxAesKey",
+        a.wx_type       AS "wxType",
+        a.wx_agentid    AS "wxAgentid",
+ 		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="commonAppInfoJoins">
+	</sql>
+    
+	<select id="get" resultType="CommonAppInfo">
+		SELECT 
+			<include refid="commonAppInfoColumns"/>
+		FROM common_app_info a
+		<include refid="commonAppInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	
+	
+	<select id="findList" resultType="CommonAppInfo">
+		SELECT 
+			<include refid="commonAppInfoColumns"/>
+		FROM common_app_info a
+		<include refid="commonAppInfoJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="officeId != null and officeId != ''">
+				AND a.shop_id = #{officeId}
+			</if>
+			 
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="CommonAppInfo">
+		SELECT 
+			<include refid="commonAppInfoColumns"/>
+		FROM common_app_info a
+		<include refid="commonAppInfoJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO common_app_info(
+			id,
+			secret_key,
+			key_version,
+			name,
+			shop_id,
+			client_id,               
+			app_image,
+			is_integral,  
+			msg_clientid , 
+		    msg_first ,  
+		    msg_last ,  
+		    msg_template ,
+		    bundleIdentifier,
+		    wx_appid,
+		    wx_app_secret,
+		    wx_token,
+		    wx_aes_key,
+		    wx_type,
+		    wx_agentid, 
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{secretKey},
+			#{keyVersion},
+			#{name},
+			#{shopId},
+			#{clientId},
+			#{appImage},
+			#{isIntegral},
+			#{msgClientid},
+			#{msgFirst},
+			#{msgLast},
+			#{msgTemplate},
+			#{bundleIdentifier},
+			#{wxAppId},
+			#{wxAppSecret},
+			#{wxToken},
+			#{wxAesKey},
+			#{wxType},
+			#{wxAgentid}, 
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE common_app_info SET 	
+			secret_key = #{secretKey},
+			key_version = #{keyVersion},
+			name = #{name},
+			shop_id = #{shopId},
+			client_id = #{clientId},
+			app_image = #{appImage},
+			is_integral = #{isIntegral},
+			msg_clientid =#{msgClientid},
+		    msg_first=#{msgFirst},
+		    msg_last=#{msgLast},
+		    msg_template =#{msgTemplate},
+		    bundleIdentifier=#{bundleIdentifier},
+		    wx_appid=#{wxAppId},
+            wx_app_secret=#{wxAppSecret},
+            wx_token = #{wxToken},
+            wx_aes_key=#{wxAesKey},
+            wx_type =#{wxType},
+            wx_agentid=#{wxAgentid},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE common_app_info SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

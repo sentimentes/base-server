@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.shoppingmall.dao.goods.GsLogisticsDao">
+    
+	<sql id="gsLogisticsColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.office_id AS "office.id",
+		a.up_down_shelf AS "upDownShelf",
+		a.sort AS "sort",
+		a.del_flag AS "delFlag",
+		o3.name AS "office.name"
+	</sql>
+	
+	<sql id="gsLogisticsJoins">
+		LEFT JOIN sys_office o3 ON o3.id = a.office_id
+	</sql>
+    
+	<select id="get" resultType="GsLogistics">
+		SELECT 
+			<include refid="gsLogisticsColumns"/>
+		FROM gs_logistics a
+		<include refid="gsLogisticsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GsLogistics">
+		SELECT 
+			<include refid="gsLogisticsColumns"/>
+		FROM gs_logistics a
+		<include refid="gsLogisticsJoins"/>
+		<where>
+			a.del_flag = '0'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			ORDER BY a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GsLogistics">
+		SELECT 
+			<include refid="gsLogisticsColumns"/>
+		FROM gs_logistics a
+		<include refid="gsLogisticsJoins"/>
+		<where>
+			a.del_flag = '0' and up_down_shelf = '1'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			ORDER BY a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO gs_logistics(
+			id,
+			name,
+			office_id,
+			up_down_shelf,
+			sort,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{office.id},
+			#{upDownShelf},
+			#{sort},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE gs_logistics SET 	
+			name = #{name},
+			office_id = #{office.id},
+			up_down_shelf = #{upDownShelf},
+			sort = #{sort}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE gs_logistics SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 批量上下架 -->
+	<update id="upDownShelf">
+		UPDATE gs_logistics 
+		SET up_down_shelf = #{upDownShelf}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 批量修改排序 -->
+	<update id="updateSort">
+		UPDATE gs_logistics 
+		SET sort = #{sort}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

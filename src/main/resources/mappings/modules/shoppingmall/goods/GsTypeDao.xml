@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.shoppingmall.dao.goods.GsTypeDao">
+    
+	<sql id="gsTypeColumns">
+		a.id AS "id",
+		a.gs_id AS "gsId",
+		a.va_id AS "vaId",
+		a.del_flag AS "delFlag",
+		a.office_id AS "office.id",
+		o5.name AS "office.name"
+	</sql>
+	
+	<sql id="ggsTypeColumns">
+		a.id AS "id",
+		a.gs_id AS "gsId",
+		a.va_id AS "vaId",
+		a.del_flag AS "delFlag",
+		a.office_id AS "office.id",
+		b.name AS "gsName",
+		c.name AS "vaName",
+		o5.name AS "office.name",
+		d.name as "smName"
+	</sql>
+	
+	<sql id="gsTypeJoins">
+		LEFT JOIN sys_office o5 ON o5.id = a.office_id
+	</sql>
+	
+	<sql id="ggsTypeJoins">
+		LEFT JOIN gs_goods b ON b.id = a.gs_id
+	</sql>
+	<sql id="gggsTypeJoins">
+		LEFT JOIN gs_menu_value c ON c.id = a.va_id
+	</sql>
+	
+	<sql id="ggggsTypeJoins">
+		LEFT JOIN gs_menu_small d ON d.id = c.gs_menu_small_id
+	</sql>
+    
+	<select id="get" resultType="GsType">
+		SELECT 
+			<include refid="gsTypeColumns"/>
+		FROM gs_type a
+		<include refid="gsTypeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GsType">
+		SELECT 
+			<include refid="ggsTypeColumns"/>
+		FROM gs_type a
+		<include refid="gsTypeJoins"/>
+		<include refid="ggsTypeJoins"/>
+		<include refid="gggsTypeJoins"/>
+		<include refid="ggggsTypeJoins"/>
+		<where>
+			a.del_flag = '0'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="gsId != null and gsId != ''">
+				AND a.gs_id = #{gsId}
+			</if>
+			<if test="vaId != null and vaId != ''">
+				AND a.va_id = #{vaId}
+			</if>
+			<if test="gsName != null and gsName != ''">
+				AND b.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{gsName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{gsName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{gsName},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GsType">
+		SELECT 
+			<include refid="ggsTypeColumns"/>
+		FROM gs_type a
+		<include refid="gsTypeJoins"/>
+		<include refid="ggsTypeJoins"/>
+		<include refid="gggsTypeJoins"/>
+		<include refid="ggggsTypeJoins"/>
+		<where>
+				a.del_flag = '0' and c.up_down_shelf = '1' and  b.up_down_shelf = '1' 
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="gsId != null and gsId != ''">
+				AND a.gs_id = #{gsId}
+			</if>
+			<if test="vaId != null and vaId != ''">
+				AND a.va_id = #{vaId}
+			</if>
+			<if test="gsName != null and gsName != ''">
+				AND b.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{gsName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{gsName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{gsName},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO gs_type(
+			id,
+			gs_id,
+			va_id,
+			del_flag,
+			office_id
+		) VALUES (
+			#{id},
+			#{gsId},
+			#{vaId},
+			#{delFlag},
+			#{office.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE gs_type SET 	
+			gs_id = #{gsId},
+			va_id = #{vaId},
+			office_id = #{office.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE gs_type SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

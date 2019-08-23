@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.sys.dao.SysSingleLoginManageDao">
+    
+	<sql id="allColumns">
+		a.user_id AS "userId",
+		a.session_id AS "sessionId",
+	    a.create_date AS "createDate",
+		a.active_flag AS "activeFlag"
+	</sql>
+    
+	<select id="get" resultType="SysSingleLoginManage">
+		SELECT 
+			<include refid="allColumns"/>
+		FROM sys_single_Login_Manage a
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysSingleLoginManage">
+		SELECT 
+			<include refid="allColumns"/>
+		FROM sys_single_Login_Manage a
+		<where>
+			<if test="userId !=null and userId != '' ">
+			    user_id = #{userId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	<select id="getOldList" resultType="SysSingleLoginManage">
+		SELECT 
+			<include refid="allColumns"/>
+		FROM sys_single_Login_Manage a where 1=1 
+		<if test="userId !=null and userId != '' ">
+		    and user_id = #{userId}
+		</if>
+		<if test="sessionId !=null and sessionId != '' ">
+		   and session_id != #{sessionId}
+		</if>
+	</select>
+	<select id="findAllList" resultType="SysSingleLoginManage">
+		SELECT 
+			<include refid="allColumns"/>
+		FROM sys_single_Login_Manage a
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_single_Login_Manage(
+			user_id,
+			session_id,
+			create_date
+		) VALUES (
+			#{userId},
+			#{sessionId},
+			#{createDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_single_Login_Manage SET 	
+			user_id = #{userId},
+			session_id = #{sessionId},
+			active_flag = #{activeFlag}
+		WHERE session_id = #{sessionId}
+	</update>
+	<update id="deleteOldSessions">
+		delete from sys_single_Login_Manage 
+		<if test="dbName == 'oracle'">
+		a where exists(SELECT 1 FROM (
+	            SELECT row_number() over(order by create_date desc) as xh,v.user_id,v.session_id from sys_single_Login_Manage v
+	            where v.user_id = #{userId} ) aa
+	            where aa.xh  &gt;=2 and a.session_id = aa.session_id)
+		</if>
+		<if test="dbName == 'mssql'">
+			a where exists(SELECT 1 FROM (
+	            SELECT row_number() over(order by create_date desc) as xh,v.user_id,v.session_id from sys_single_Login_Manage v
+	            where v.user_id = #{userId} ) aa
+	            where aa.xh  &gt;=2 and a.session_id = aa.session_id)
+		</if>
+		<if test="dbName == 'mysql'">
+		where exists(
+		    SELECT 1 FROM (
+	            SELECT  @rownum:=@rownum+1 as xh,v.user_id,v.session_id from sys_single_Login_Manage v,(select @rownum:=0) r 
+	            where v.user_id = #{userId} order by v.create_date desc
+            ) aa where aa.xh  &gt;=2 and session_id = aa.session_id)
+		</if>
+	</update>
+	<update id="delete">
+		DELETE FROM sys_single_Login_Manage
+		WHERE user_id = #{userId}
+	</update>
+	
+</mapper>

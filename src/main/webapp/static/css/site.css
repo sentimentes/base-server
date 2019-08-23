@@ -1,0 +1,146 @@
+*{
+	font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+}
+p{
+	line-height:2em;
+}
+html,body{
+  position: relative;
+  height:100%;
+  font-size:16px;
+}
+.swiper-container {
+  width: 100%;
+}
+.swiper-slide {
+}
+.swiper-slide img{
+  width:100%;
+}
+.orange{
+	color:#f9650a;
+}
+.bg_gray{
+	background-color:#fafafa;
+}
+#copyright{
+	line-height:5em;
+	text-align:center;
+}
+.v-shadow{
+	background-image: url(../img/shadow.png);
+	background-repeat: repeat-y;
+}
+.navbar{
+  background:none;
+  border:none!important;
+  padding-top:13px;
+  border-radius:0;
+}
+.navbar-header{
+  margin-top:-13px;
+}
+.navbar a{
+  color:#fff!important;
+}
+#btn-login{
+  background-color:#fff;
+  border:#fff!important;
+  border-radius: 100px;
+  color:#f60!important;
+}
+#btn-reg{
+  color:#fff!important;
+  border:solid 1px #fff!important;
+  background:none;
+  border-radius: 100px;
+}
+
+footer{
+  color:#fff;
+  background-color:#232323;
+}
+.footer_bg{
+  background-image: url('../img/bottom1.png');
+  background-position: top center;
+  background-repeat: no-repeat;
+  height:449px;
+}
+body.theme_blue{
+  background-image: url('../img/blue_bg.jpg');
+  background-repeat:no-repeat;
+  background-position:top center;
+}
+body.theme_blue .breadcrumb{
+	color:#ccc;
+	background-color:transparent;
+}
+body.theme_blue .breadcrumb a{
+	color:#ccc;
+}
+body.theme_blue .breadcrumb .active{
+	color:#fff;
+}
+body.theme_blue .breadcrumb>li+li:before {
+    padding: 0 5px;
+    color: #ccc;
+    content: "";
+}
+body.theme_blue .main{
+	background-color:#d3d5db;
+	border-radius:1em;
+}
+body.theme_blue h1{
+	color:#333;
+	font-size:16px;
+	font-weight:bold;
+	line-height:2em;
+	margin: 1em;
+	border-bottom:solid 1px #999999;
+}
+body.theme_blue label{
+	color:#666;
+}
+
+
+body.theme_orange{
+}
+body.theme_orange nav{
+	background-color:#f9650a;
+}
+
+body#index .thumbnail{
+  border:none;
+}
+
+body#index
+	.swiper-pagination-bullet{
+		background-color:#000;
+		opacity:0.3;
+}
+body#index
+	.swiper-pagination-bullet-active{
+		background-color:#fff;
+		opacity:1;
+}
+#main-nav{
+	z-index:100;
+}
+#index .swiper-container{
+	top:-83px;
+	 
+}
+#links{
+	background-color: #000;
+	line-height: 2em;
+	position: relative;
+	margin-top: 42px;
+	color:#fff;
+}
+#links a{color:#fff;}
+#links #top{
+	background-image: url(../img/top.png);
+	background-repeat: no-repeat;
+	width:83px;
+	height:42px;
+}

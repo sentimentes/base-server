@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.shoppingmall.dao.goods.GsShoppingCartDao">
+    
+	<sql id="gsShoppingCartColumns">
+		a.id AS "id",
+		a.gs_id AS "gsId",
+		a.office_id AS "office.id",
+		a.up_down_shelf AS "upDownShelf",
+		a.sort AS "sort",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.parameter AS "parameter",
+		a.create_bys AS "createBys",
+		a.number AS "number",
+		o3.name AS "office.name"
+	</sql>
+	
+	<sql id="ggsShoppingCartColumns">
+		a.id AS "id",
+		a.gs_id AS "gsId",
+		a.office_id AS "office.id",
+		a.up_down_shelf AS "upDownShelf",
+		a.sort AS "sort",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.parameter AS "parameter",
+		a.create_bys AS "createBys",
+		b.name AS gsName,
+		b.image AS image,
+		b.price AS price,
+		b.sale_price AS salePrice,
+		a.number AS "number",
+		o3.name AS "office.name"
+	</sql>
+	<sql id="gsShoppingCartJoins">
+		LEFT JOIN sys_office o3 ON o3.id = a.office_id
+	</sql>
+	
+	<sql id="ggsShoppingCartJoins">
+		LEFT JOIN gs_goods b ON b.id = a.gs_id
+	</sql>
+    
+	<select id="get" resultType="GsShoppingCart">
+		SELECT 
+			<include refid="gsShoppingCartColumns"/>
+		FROM gs_shopping_cart a
+		<include refid="gsShoppingCartJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GsShoppingCart">
+		SELECT 
+			<include refid="ggsShoppingCartColumns"/>
+		FROM gs_shopping_cart a
+		<include refid="ggsShoppingCartJoins"/>
+		<include refid="gsShoppingCartJoins"/>
+		<where>
+			a.del_flag = '0'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="createBys != null and createBys != ''">
+				AND a.create_bys = #{createBys}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC,a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GsShoppingCart">
+		SELECT 
+			<include refid="gsShoppingCartColumns"/>
+		FROM gs_shopping_cart a
+		<include refid="gsShoppingCartJoins"/>
+		<where>
+				a.del_flag = '0' and up_down_shelf = '1'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC,a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO gs_shopping_cart(
+			id,
+			gs_id,
+			office_id,
+			up_down_shelf,
+			sort,
+			del_flag,
+			create_by,
+			create_bys,
+			create_date,
+			update_by,
+			parameter,
+			number,
+			update_date
+		) VALUES (
+			#{id},
+			#{gsId},
+			#{office.id},
+			#{upDownShelf},
+			#{sort},
+			#{delFlag},
+			#{createBy.id},
+			#{createBys},
+			#{createDate},
+			#{updateBy.id},
+			#{parameter},
+			#{number},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE gs_shopping_cart SET 	
+			number = #{number},
+			parameter = #{parameter},
+			gs_id = #{gsId},
+			office_id = #{office.id},
+			up_down_shelf = #{upDownShelf},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE gs_shopping_cart SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.sys.dao.OfficeDao">
+
+	<sql id="officeColumns">
+		a.id,
+		a.parent_id AS "parent.id",
+		a.parent_ids,
+		a.area_id AS "area.id",
+		a.code,
+		a.name,
+		a.sort,
+		a.type,
+		a.grade,
+		a.address, 
+		a.zip_code, 
+		a.master, 
+		a.phone, 
+		a.fax,
+		a.company_name AS "companyName",
+		a.company_phone AS "companyPhone",
+		a.company_type AS "companyType",
+		a.company_address AS "companyAddress",
+		a.company_id AS "companyId",
+		a.country_id AS "areadId",
+		a.email, 
+		a.remarks,
+		a.create_by AS "createBy.id",
+		a.create_date,
+		a.update_by AS "updateBy.id",
+		a.update_date,
+		a.del_flag,
+		a.office_type AS "officeType",
+		a.useable AS useable,
+		a.primary_person AS "primaryPerson.id",
+		a.deputy_person AS "deputyPerson.id",
+		p.name AS "parent.name",
+		ar.name AS "area.name",
+		ar.parent_ids AS "area.parentIds",
+		pp.name AS "primaryPerson.name",
+		dp.name AS "deputyPerson.name"
+	</sql>
+	<sql id="officeSimpleColumns">
+		a.id,
+		a.parent_id AS "parent.id",
+		a.parent_ids,
+		a.area_id AS "area.id",
+		a.code,
+		a.name,
+		a.sort,
+		a.type,
+		a.grade,
+		a.address, 
+		a.zip_code, 
+		a.master, 
+		a.phone, 
+		a.fax,
+		a.office_type AS "officeType",
+		a.company_name AS "companyName",
+		a.company_phone AS "companyPhone",
+		a.company_type AS "companyType",
+		a.company_address AS "companyAddress",
+		a.company_id AS "companyId",
+	    a.country_id AS "areadId",
+		a.email, 
+		a.remarks,
+		a.create_by AS "createBy.id",
+		a.create_date,
+		a.update_by AS "updateBy.id",
+		a.update_date,
+		a.del_flag,
+		a.useable AS useable,
+		a.primary_person AS "primaryPerson.id",
+		a.deputy_person AS "deputyPerson.id"
+	 
+	</sql>
+	<sql id="officeJoins">
+		LEFT JOIN sys_office p ON p.id = a.parent_id
+		LEFT JOIN sys_area ar ON ar.id = a.area_id
+		LEFT JOIN SYS_USER pp ON pp.id = a.primary_person
+		LEFT JOIN SYS_USER dp ON dp.id = a.deputy_person
+    </sql>
+	
+	<select id="get" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="getById" resultType="Office">
+		SELECT
+			<include refid="officeSimpleColumns"/>
+		FROM sys_office a
+	 
+		WHERE a.id = #{id}
+	</select>
+	
+	<!-- 获取office中code的最大编码 -->
+	<select id="getMaxCode" resultType="Office">
+		SELECT max(a.code) AS "code"
+			<include refid="officeSimpleColumns"/>
+		FROM sys_office a
+	</select>
+	
+	<select id="findList" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test=" companyName !=null and companyName!=''">
+		   AND a.company_name = #{companyName}
+		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		OR a.id = #{currentUser.office.id}
+		ORDER BY a.sort asc
+	</select>
+	
+	<select id="getMaxSort" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test=" companyName !=null and companyName!=''">
+		   AND a.company_name = #{companyName}
+		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		OR a.id = #{currentUser.office.id}
+		ORDER BY a.sort desc
+	</select>
+ 
+ 
+     <!-- 新增获取office集合，用于资讯和商品存入缓存 -->
+    <select id="findOfficeList" resultType="Office">
+		SELECT
+			<include refid="officeSimpleColumns"/>
+		FROM sys_office a
+		WHERE a.del_flag = '0'
+	</select>
+		<select id="getOfficeList" resultType="Office">
+		SELECT
+			<include refid="officeSimpleColumns"/>
+		FROM sys_office a
+ 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+	
+		AND parent_id=#{parent.id}
+		ORDER BY a.code
+	</select>			
+	<select id="findAllList" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY a.code
+	</select>
+	
+	<select id="findByParentIdsLike" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
+		ORDER BY a.sort asc
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_office(
+			id, 
+			parent_id, 
+			parent_ids, 
+			area_id, 
+			code, 
+			name, 
+			sort, 
+			type, 
+			grade, 
+			address, 
+			zip_code, 
+			master, 
+			phone, 
+			fax,
+			office_type,
+			company_name,
+			company_phone,
+			company_type,
+			country_id,
+			company_address,
+			company_id, 
+			email, 
+			create_by, 
+			create_date, 
+			update_by, 
+			update_date, 
+			remarks, 
+			del_flag,
+			useable,
+			primary_person,
+			deputy_person
+		) VALUES (
+			#{id}, 
+			#{parent.id}, 
+			#{parentIds}, 
+			#{area.id}, 
+			#{code}, 
+			#{name}, 
+			#{sort}, 
+			#{type}, 
+			#{grade}, 
+			#{address}, 
+			#{zipCode}, 
+			#{master}, 
+			#{phone}, 
+			#{fax},
+			#{officeType},
+			#{companyName},
+			#{companyPhone},
+			#{companyType},
+			#{areadId},
+			#{companyAddress},
+			#{companyId}, 
+			#{email}, 
+			#{createBy.id}, 
+			#{createDate}, 
+			#{updateBy.id}, 
+			#{updateDate}, 
+			#{remarks}, 
+			#{delFlag},
+			#{useable},
+			#{primaryPerson.id},
+			#{deputyPerson.id}
+		)
+	</insert>
+	
+	<!-- 插入商户信息 -->
+	<insert id="insertInfo">
+		INSERT INTO sys_office(
+			id, 
+			parent_id, 
+			parent_ids, 
+			area_id, 
+			code, 
+			name, 
+			sort, 
+			type, 
+			grade, 
+			address, 
+			zip_code, 
+			master, 
+			phone, 
+			fax,
+			office_type,
+			company_name,
+			company_phone,
+			company_type,
+			country_id,
+			company_address,
+			company_id, 
+			email, 
+			create_by, 
+			create_date, 
+			update_by, 
+			update_date, 
+			remarks, 
+			del_flag,
+			useable,
+			primary_person,
+			deputy_person
+		) VALUES (
+			#{id}, 
+			#{parentId}, 
+			#{parentIds}, 
+			#{area.id}, 
+			#{code}, 
+			#{name}, 
+			#{sort}, 
+			#{type}, 
+			#{grade}, 
+			#{address}, 
+			#{zipCode}, 
+			#{master}, 
+			#{phone}, 
+			#{fax},
+			#{officeType},
+			#{companyName},
+			#{companyPhone},
+			#{companyType},
+			#{areadId},
+			#{companyAddress},
+			#{companyId}, 
+			#{email}, 
+			#{createBy.id}, 
+			#{createDate}, 
+			#{updateBy.id}, 
+			#{updateDate}, 
+			#{remarks}, 
+			#{delFlag},
+			#{useable},
+			#{primaryPerson.id},
+			#{deputyPerson.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_office SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}, 
+			area_id = #{area.id}, 
+			code = #{code}, 
+			name = #{name}, 
+			type = #{type}, 
+			sort = #{sort},
+			office_type = #{officeType},
+			grade = #{grade},
+			company_type= #{companyType},
+			address = #{address}, 
+			zip_code = #{zipCode}, 
+			master = #{master}, 
+			phone = #{phone}, 
+			fax = #{fax}, 
+			email = #{email}, 
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			remarks = #{remarks},
+			useable=#{useable},
+			primary_person=#{primaryPerson.id},
+			deputy_person=#{deputyPerson.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateParentIds">
+		UPDATE sys_office SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_office SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id} OR parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+					<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	
+	<!-- 根据条件查询数据 -->
+	<select id="findResultList" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		AND a.parent_id='084171b2e70d4073aad57ff17a0a6b56'
+		<if test="companyType != null and companyType != ''">
+			AND  a.company_type like 
+					<if test="dbName == 'oracle'">'%'||#{companyType}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{companyType}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{companyType}, '%')</if>
+		</if>
+		  
+		<if test="name != null and name != ''">
+			AND a.name like 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+		</if>
+	</select>
+	
+	
+	<!-- 内容运营商列表 -->
+	<select id="findCoList" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		and  a.company_type like '%2%'
+	
+		<if test=" companyName !=null and companyName!=''">
+		   AND a.company_name = #{companyName}
+		</if>
+	</select>
+	
+	<!-- 根据机构名称获取机构信息 -->
+	<select id="getByName" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.name = #{name}
+		<if test="parent != null and parent.id != null and parent.id != ''">
+				AND a.parent_id = #{parent.id}
+		</if>
+	 
+	</select>
+	
+	
+	<!-- 获取第二级开始的数据列表 -->
+	<select id="pbDepartmentList" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}  
+          AND a.parent_ids LIKE 	
+          <if test="dbName == 'mysql'">CONCAT('%', #{parentIds}, '%')</if>	ORDER BY a.code
+	</select>
+	
+	<!-- 根据机构的id获取其绑定的部门 -->
+	<select id="findAllName" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} 
+		<if test="parent != null and parent.id != null and parent.id != ''">
+				AND a.parent_id = #{parent.id}
+		</if>
+		ORDER BY a.code
+	</select>
+	
+	<!-- 根据id物理删除机构数据 -->
+	<update id="physicsDelete">
+		DELETE FROM sys_office 
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 获取第二级开始的数据列表 -->
+	<select id="getByOfficeList" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}  and a.id = #{id}
+	</select>
+	
+	
+	<select id="findAllOfficeList" resultType="Office">
+		SELECT a.id AS "id",a.name AS "name" ,a.create_date AS "create_date",a.parent_ids AS "parentIds"
+		FROM sys_office a
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="notId != null and notId != ''">
+				AND a.id != #{notId}
+		</if>
+		<if test="id != null and id != ''">
+				AND a.id = #{id}
+		</if>
+		 ORDER BY a.sort asc
+	</select>
+</mapper>

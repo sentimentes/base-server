@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.application.dao.CommonAppRoleDao">
+    
+	<sql id="commonAppRoleColumns">
+		a.id AS "id",
+		a.app_id AS "appId",
+		a.role_id AS "roleId",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remark AS "remark",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="commonAppRoleSimpleColumns">
+		a.id AS "id",
+		a.app_id AS "appId",
+		a.role_id AS "roleId",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remark AS "remark",
+		a.del_flag AS "delFlag",
+		r.name     AS  "commonRole.name",
+		r.id       AS   "commonRole.id"
+	</sql>
+	 
+	
+	<sql id="commonAppRoleJoins">
+	 
+	
+	</sql>
+    
+    
+    <sql id="commonAppRoleSimpleJoins">
+	 INNER JOIN  common_role r on r.id = a.role_id
+	
+	</sql>
+	<select id="get" resultType="CommonAppRole">
+		SELECT 
+			<include refid="commonAppRoleColumns"/>
+		FROM common_app_role a
+		<include refid="commonAppRoleJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="CommonAppRole">
+		SELECT 
+			<include refid="commonAppRoleSimpleColumns"/>
+		FROM common_app_role a
+		<include refid="commonAppRoleSimpleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="appId != null   and appId!= ''">
+			AND  a.app_id = #{appId}
+		</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<select id="findAlreadyList" resultType="CommonAppRole">
+		SELECT 
+			<include refid="commonAppRoleSimpleColumns"/>
+		FROM common_app_role a
+		<include refid="commonAppRoleSimpleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="appId != null   and appId!= ''">
+			 AND a.app_id = #{appId}
+		</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="CommonAppRole">
+		SELECT 
+			<include refid="commonAppRoleColumns"/>
+		FROM common_app_role a
+		<include refid="commonAppRoleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	 
+	<insert id="insert">
+		INSERT INTO common_app_role(
+			id,
+			app_id,
+			role_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remark,
+			del_flag
+		) VALUES (
+			#{id},
+			#{appId},
+			#{roleId},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remark},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE common_app_role SET 	
+			app_id = #{appId},
+			role_id = #{roleId},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remark = #{remark}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE common_app_role SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+
+	
+	
+</mapper>

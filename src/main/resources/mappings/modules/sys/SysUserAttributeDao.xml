@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.sys.dao.SysUserAttributeDao">
+    
+	<sql id="sysUserAttributeColumns">
+		a.id AS "id",
+		a.timess AS "timess",
+		a.abnormal_times AS "abnormalTimes",
+		a.lock_time AS "lockTime",
+		a.visit_start AS "visitStart",
+		a.visit_end AS "visitEnd",
+		a.bounded_ip AS "boundedIp",
+		a.expiration_date AS "expirationDate",
+		a.office_id AS "office.id",
+		a.create_by AS "createBy.id",
+		a.user_id AS "userId",
+		a.create_date AS "createDate",
+		a.lock_start_time AS "lockStartTime",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		o8.name AS "office.name"
+	</sql>
+	
+	<sql id="sysUserAttributeJoins">
+		LEFT JOIN sys_office o8 ON o8.id = a.office_id
+	</sql>
+    
+	<select id="get" resultType="SysUserAttribute">
+		SELECT 
+			<include refid="sysUserAttributeColumns"/>
+		FROM sys_user_attribute a
+		<include refid="sysUserAttributeJoins"/>
+		WHERE a.user_id = #{userId}
+	</select>
+	
+	<select id="findList" resultType="SysUserAttribute">
+		SELECT 
+			<include refid="sysUserAttributeColumns"/>
+		FROM sys_user_attribute a
+		<include refid="sysUserAttributeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysUserAttribute">
+		SELECT 
+			<include refid="sysUserAttributeColumns"/>
+		FROM sys_user_attribute a
+		<include refid="sysUserAttributeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_user_attribute(
+			id,
+			timess,
+			abnormal_times,
+			lock_time,
+			visit_start,
+			visit_end,
+			bounded_ip,
+			expiration_date,
+			office_id,
+			create_by,
+			user_id,
+			create_date,
+			lock_start_time,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{timess},
+			#{abnormalTimes},
+			#{lockTime},
+			#{visitStart},
+			#{visitEnd},
+			#{boundedIp},
+			#{expirationDate},
+			#{office.id},
+			#{createBy.id},
+			#{userId},
+			#{createDate},
+			#{lockStartTime},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_user_attribute SET 	
+			abnormal_times = #{abnormalTimes},
+			lock_time = #{lockTime},
+			visit_start = #{visitStart},
+			visit_end = #{visitEnd},
+			bounded_ip = #{boundedIp},
+			expiration_date = #{expirationDate},
+			office_id = #{office.id},
+			user_id = #{userId},
+			lock_start_time = #{lockStartTime},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_user_attribute SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 根据用户id创建锁定的时间 -->
+	<update id="updateStatus">
+		UPDATE sys_user_attribute SET 
+			lock_start_time = #{lockStartTime}
+		WHERE user_id = #{userId}
+	</update>
+	
+	<!-- 根据用户id创建锁定的时间 -->
+	<update id="updateTimes">
+		UPDATE sys_user_attribute SET 
+			timess = #{timess}
+		WHERE user_id = #{userId}
+	</update>
+	
+</mapper>

@@ -1,0 +1,567 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<link href="common.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jquery.tools.js"></script>
+<script type="text/javascript" src="jquery.validate.js"></script>
+<script type="text/javascript" src="kindeditor.js"></script>
+<script type="text/javascript" src="common.js"></script>
+<script type="text/javascript" src="input.js"></script>
+<style type="text/css">
+.specificationSelect {
+	height: 100px;
+	padding: 5px;
+	overflow-y: scroll;
+	border: 1px solid #cccccc;
+}
+.specificationSelect li {
+	float: left;
+	min-width: 150px;
+	_width: 200px;
+}
+</style>
+<script type="text/javascript">
+$().ready(function() {
+
+	var $inputForm = $("#inputForm");
+	var $productCategoryId = $("#productCategoryId");
+	var $isMemberPrice = $("#isMemberPrice");
+	var $memberPriceTr = $("#memberPriceTr");
+	var $memberPrice = $("#memberPriceTr input");
+	var $browserButton = $("#browserButton");
+	var $productImageTable = $("#productImageTable");
+	var $addProductImage = $("#addProductImage");
+	var $deleteProductImage = $("a.deleteProductImage");
+	var $parameterTable = $("#parameterTable");
+	var $attributeTable = $("#attributeTable");
+	var $specificationIds = $("#specificationSelect :checkbox");
+	var $specificationProductTable = $("#specificationProductTable");
+	var $addSpecificationProduct = $("#addSpecificationProduct");
+	var $deleteSpecificationProduct = $("a.deleteSpecificationProduct");
+	var productImageIndex = 1;
+	var previousProductCategoryId = "2";
+	
+	
+	$browserButton.browser();
+	
+	// 会员价
+	$isMemberPrice.click(function() {
+		if ($(this).prop("checked")) {
+			$memberPriceTr.show();
+			$memberPrice.prop("disabled", false);
+		} else {
+			$memberPriceTr.hide();
+			$memberPrice.prop("disabled", true);
+		}
+	});
+	
+	// 增加商品图片
+	$addProductImage.click(function() {
+var trHtml = '<tr> <td> <input type="file" name="productImages[' + productImageIndex + '].file" class="productImageFile" \/> <\/td> <td> <input type="text" name="productImages[' + productImageIndex + '].title" class="text" maxlength="200" \/> <\/td> <td> <input type="text" name="productImages[' + productImageIndex + '].order" class="text productImageOrder" maxlength="9" style="width: 50px;" \/> <\/td> <td> <a href="javascript:;" class="deleteProductImage">[删除]<\/a> <\/td> <\/tr>';		$productImageTable.append(trHtml);
+		productImageIndex ++;
+	});
+	
+	// 删除商品图片
+	$deleteProductImage.live("click", function() {
+		var $this = $(this);
+		$.dialog({
+			type: "warn",
+			content: "您确定要删除吗？",
+			onOk: function() {
+				$this.closest("tr").remove();
+			}
+		});
+	});
+	
+	// 修改商品分类
+	$productCategoryId.change(function() {
+		var hasValue = false;
+		$parameterTable.add($attributeTable).find(":input").each(function() {
+			if ($.trim($(this).val()) != "") {
+				hasValue = true;
+				return false;
+			}
+		});
+		if (hasValue) {
+			$.dialog({
+				type: "warn",
+				content: "修改商品分类后当前参数、属性数据将会丢失，是否继续？",
+				width: 450,
+				onOk: function() {
+					loadParameter();
+					loadAttribute();
+					previousProductCategoryId = $productCategoryId.val();
+				},
+				onCancel: function() {
+					$productCategoryId.val(previousProductCategoryId);
+				}
+			});
+		} else {
+			loadParameter();
+			loadAttribute();
+			previousProductCategoryId = $productCategoryId.val();
+		}
+	});
+	
+	// 加载参数
+	function loadParameter() {
+		$.ajax({
+			url: "parameter_groups.jhtml",
+			type: "GET",
+			data: {id: $productCategoryId.val()},
+			dataType: "json",
+			beforeSend: function() {
+				$parameterTable.empty();
+			},
+			success: function(data) {
+				var trHtml = "";
+				$.each(data, function(i, parameterGroup) {
+					trHtml += '<tr><td style="text-align: right;"><strong>' + parameterGroup.name + ':<\/strong><\/td><td>&nbsp;<\/td><\/tr>';
+					$.each(parameterGroup.parameters, function(i, parameter) {
+trHtml += '<tr> <th>' + parameter.name + ': <\/th> <td> <input type="text" name="parameter_' + parameter.id + '" class="text" maxlength="200" \/> <\/td> <\/tr>';					});
+				});
+				$parameterTable.append(trHtml);
+			}
+		});
+	}
+	
+	// 加载属性
+	function loadAttribute() {
+		$.ajax({
+			url: "attributes.jhtml",
+			type: "GET",
+			data: {id: $productCategoryId.val()},
+			dataType: "json",
+			beforeSend: function() {
+				$attributeTable.empty();
+			},
+			success: function(data) {
+				var trHtml = "";
+				$.each(data, function(i, attribute) {
+					var optionHtml = '<option value="">请选择...<\/option>';
+					$.each(attribute.options, function(j, option) {
+						optionHtml += '<option value="' + option + '">' + option + '<\/option>';
+					});
+trHtml += '<tr> <th>' + attribute.name + ': <\/th> <td> <select name="attribute_' + attribute.id + '"> ' + optionHtml + ' <\/select> <\/td> <\/tr>';				});
+				$attributeTable.append(trHtml);
+			}
+		});
+	}
+	
+	// 修改商品规格
+	$specificationIds.click(function() {
+		if ($specificationIds.filter(":checked").size() == 0) {
+			$specificationProductTable.find("tr:gt(1)").remove();
+		}
+		var $this = $(this);
+		if ($this.prop("checked")) {
+			$specificationProductTable.find("td.specification_" + $this.val()).show().find("select").prop("disabled", false);
+		} else {
+			$specificationProductTable.find("td.specification_" + $this.val()).hide().find("select").prop("disabled", true);
+		}
+	});
+	
+	// 增加规格商品
+	$addSpecificationProduct.click(function() {
+		if ($specificationIds.filter(":checked").size() == 0) {
+			$.message("warn", "必须至少选择一个规格");
+			return false;
+		}
+		if ($specificationProductTable.find("tr:gt(1)").size() == 0) {
+			$tr = $specificationProductTable.find("tr:eq(1)").clone().show().appendTo($specificationProductTable);
+			$tr.find("td:first").text("当前规格");
+			$tr.find("td:last").text("-");
+		} else {
+			$specificationProductTable.find("tr:eq(1)").clone().show().appendTo($specificationProductTable);
+		}
+	});
+	
+	// 删除规格商品
+	$deleteSpecificationProduct.live("click", function() {
+		var $this = $(this);
+		$.dialog({
+			type: "warn",
+			content: "您确定要删除吗？",
+			onOk: function() {
+				$this.closest("tr").remove();
+			}
+		});
+	});
+	
+	$.validator.addClassRules({
+		memberPrice: {
+			min: 0,
+			decimal: {
+				integer: 12,
+				fraction: 2
+			}
+		},
+		productImageFile: {
+			required: true,
+			extension: "jpg,jpeg,bmp,gif,png"
+		},
+		productImageOrder: {
+			digits: true
+		}
+	});
+	
+	// 表单验证
+	$inputForm.validate({
+		rules: {
+			productCategoryId: "required",
+			name: "required",
+			sn: {
+				pattern: /^[0-9a-zA-Z_-]+$/,
+				remote: {
+					url: "check_sn.jhtml?previousSn=20160629607",
+					cache: false
+				}
+			},
+			price: {
+				required: true,
+				min: 0,
+				decimal: {
+					integer: 12,
+					fraction: 2
+				}
+			},
+			cost: {
+				min: 0,
+				decimal: {
+					integer: 12,
+					fraction: 2
+				}
+			},
+			marketPrice: {
+				min: 0,
+				decimal: {
+					integer: 12,
+					fraction: 2
+				}
+			},
+			weight: "digits",
+			stock: "digits",
+			point: "digits"
+		},
+		messages: {
+			sn: {
+				pattern: "非法字符",
+				remote: "已存在"
+			}
+		},
+		submitHandler: function(form) {
+			if ($specificationIds.filter(":checked").size() > 0 && $specificationProductTable.find("tr:gt(1)").size() == 0) {
+				$.message("warn", "必须至少添加一个规格商品");
+				return false;
+			} else {
+				var isRepeats = false;
+				var parameters = new Array();
+				$specificationProductTable.find("tr:gt(1)").each(function() {
+					var parameter = $(this).find("select").serialize();
+					if ($.inArray(parameter, parameters) >= 0) {
+						$.message("warn", "商品规格值重复");
+						isRepeats = true;
+						return false;
+					} else {
+						parameters.push(parameter);
+					}
+				});
+				if (!isRepeats) {
+					$specificationProductTable.find("tr:eq(1)").find("select").prop("disabled", true);
+					addCookie("previousProductCategoryId", $productCategoryId.val(), {expires: 24 * 60 * 60});
+					form.submit();
+				}
+			}
+		}
+	});
+	
+});
+</script>
+<link href="default.css" rel="stylesheet">
+</head>
+<body>
+<form id="inputForm" action="../update.jhtml" method="post" enctype="multipart/form-data" novalidate>
+  <input type="hidden" name="id" value="304">
+  <table class="input tabContent" style="display: table;">
+    <tbody>
+      <tr class="title">
+        <th> 请选择商品规格: </th>
+      </tr>
+      <tr>
+        <td><div id="specificationSelect" class="specificationSelect">
+            <ul>
+            
+              <li>
+                <label>
+                  <input type="checkbox" name="specificationIds" value="1" checked="checked">
+                  颜色 <span class="gray">[女装]</span> </label>
+              </li>
+              <li>
+              
+                <label>
+                  <input type="checkbox" name="specificationIds" value="7">
+                  鞋码 <span class="gray">[111]</span> </label>
+              </li>
+              
+              <li>
+                <label>
+                  <input type="checkbox" name="specificationIds" value="2" checked="checked">
+                  颜色 <span class="gray">[男装]</span> </label>
+              </li>
+              
+              <li>
+                <label>
+                  <input type="checkbox" name="specificationIds" value="3" checked="checked">
+                  尺码 <span class="gray">[女装]</span> </label>
+              </li>
+              
+              <li>
+                <label>
+                  <input type="checkbox" name="specificationIds" value="4" checked="checked">
+                  尺码 <span class="gray">[男装]</span> </label>
+              </li>
+              
+              <li>
+                <label>
+                  <input type="checkbox" name="specificationIds" value="5">
+                  尺码 <span class="gray">[女鞋]</span> </label>
+              </li>
+              
+              <li>
+                <label>
+                  <input type="checkbox" name="specificationIds" value="6">
+                  尺码 <span class="gray">[男鞋]</span> </label>
+              </li>
+              
+            </ul>
+          </div></td>
+      </tr>
+      <tr>
+        <td><a href="javascript:;" id="addSpecificationProduct" class="button">增加规格商品</a></td>
+      </tr>
+      <tr>
+        <td>
+        <table id="specificationProductTable" class="input">
+            <tbody>
+              <tr class="title">
+                <td width="60">&nbsp;</td>
+                <td class="specification_1"> 颜色 <span class="gray">[女装]</span></td>
+                <td class="specification_7 hidden"> 鞋码 <span class="gray">[111]</span></td>
+                <td class="specification_2"> 颜色 <span class="gray">[男装]</span></td>
+                <td class="specification_3"> 尺码 <span class="gray">[女装]</span></td>
+                <td class="specification_4"> 尺码 <span class="gray">[男装]</span></td>
+                <td class="specification_5 hidden"> 尺码 <span class="gray">[女鞋]</span></td>
+                <td class="specification_6 hidden"> 尺码 <span class="gray">[男鞋]</span></td>
+                <td> 操作 </td>
+              </tr>
+              <tr class="hidden">
+                <td>&nbsp;</td>
+                <td class="specification_1"><select name="specification_1">
+                    <option value="1">无</option>
+                    <option value="2">黄色</option>
+                    <option value="3">酒红色</option>
+                    <option value="4">金色</option>
+                    <option value="5">橙色</option>
+                    <option value="6">灰色</option>
+                    <option value="7">蓝色</option>
+                    <option value="8">黑色</option>
+                    <option value="9">卡其色</option>
+                    <option value="10">混色</option>
+                    <option value="11">紫色</option>
+                    <option value="12">粉红色</option>
+                    <option value="13">银色</option>
+                    <option value="14">红色</option>
+                    <option value="15">白色</option>
+                    <option value="16">浅蓝色</option>
+                    <option value="17">深蓝色</option>
+                    <option value="18">绿色</option>
+                    <option value="19">米黄色</option>
+                    <option value="20">咖啡色</option>
+                  </select></td>
+                <td class="specification_7 hidden"><select name="specification_7" disabled="disabled">
+                    <option value="77">22333</option>
+                  </select></td>
+                <td class="specification_2"><select name="specification_2">
+                    <option value="21">无</option>
+                    <option value="22">黄色</option>
+                    <option value="23">酒红色</option>
+                    <option value="24">金色</option>
+                    <option value="25">橙色</option>
+                    <option value="26">灰色</option>
+                    <option value="27">蓝色</option>
+                    <option value="28">黑色</option>
+                    <option value="29">卡其色</option>
+                    <option value="30">混色</option>
+                    <option value="31">紫色</option>
+                    <option value="32">粉红色</option>
+                    <option value="33">银色</option>
+                    <option value="34">红色</option>
+                    <option value="35">白色</option>
+                    <option value="36">浅蓝色</option>
+                    <option value="37">深蓝色</option>
+                    <option value="38">绿色</option>
+                    <option value="39">米黄色</option>
+                    <option value="40">咖啡色</option>
+                  </select></td>
+                <td class="specification_3"><select name="specification_3">
+                    <option value="41">均码</option>
+                    <option value="42">XXS</option>
+                    <option value="43">XS</option>
+                    <option value="44">S</option>
+                    <option value="45">M</option>
+                    <option value="46">L</option>
+                    <option value="47">XL</option>
+                    <option value="48">XXL</option>
+                    <option value="49">XXXL</option>
+                  </select></td>
+                <td class="specification_4"><select name="specification_4">
+                    <option value="50">均码</option>
+                    <option value="51">XXS</option>
+                    <option value="52">XS</option>
+                    <option value="53">S</option>
+                    <option value="54">M</option>
+                    <option value="55">L</option>
+                    <option value="56">XL</option>
+                    <option value="57">XXL</option>
+                    <option value="58">XXXL</option>
+                  </select></td>
+                <td class="specification_5 hidden"><select name="specification_5" disabled="disabled">
+                    <option value="59">34</option>
+                    <option value="60">35</option>
+                    <option value="61">36</option>
+                    <option value="62">37</option>
+                    <option value="63">38</option>
+                    <option value="64">39</option>
+                    <option value="65">40</option>
+                    <option value="66">41</option>
+                  </select></td>
+                <td class="specification_6 hidden"><select name="specification_6" disabled="disabled">
+                    <option value="67">36</option>
+                    <option value="68">37</option>
+                    <option value="69">38</option>
+                    <option value="70">39</option>
+                    <option value="71">40</option>
+                    <option value="72">41</option>
+                    <option value="73">42</option>
+                    <option value="74">43</option>
+                    <option value="75">44</option>
+                    <option value="76">45</option>
+                  </select></td>
+                <td><a href="javascript:;" class="deleteSpecificationProduct">[删除]</a></td>
+              </tr>
+              <tr>
+                <td> 当前规格
+                  <input type="hidden" name="specificationProductIds" value="304"></td>
+                <td class="specification_1"><select name="specification_1">
+                    <option value="1">无</option>
+                    <option value="2" selected="selected">黄色</option>
+                    <option value="3">酒红色</option>
+                    <option value="4">金色</option>
+                    <option value="5">橙色</option>
+                    <option value="6">灰色</option>
+                    <option value="7">蓝色</option>
+                    <option value="8">黑色</option>
+                    <option value="9">卡其色</option>
+                    <option value="10">混色</option>
+                    <option value="11">紫色</option>
+                    <option value="12">粉红色</option>
+                    <option value="13">银色</option>
+                    <option value="14">红色</option>
+                    <option value="15">白色</option>
+                    <option value="16">浅蓝色</option>
+                    <option value="17">深蓝色</option>
+                    <option value="18">绿色</option>
+                    <option value="19">米黄色</option>
+                    <option value="20">咖啡色</option>
+                  </select></td>
+                <td class="specification_7 hidden"><select name="specification_7" disabled="disabled">
+                    <option value="77">22333</option>
+                  </select></td>
+                <td class="specification_2"><select name="specification_2">
+                    <option value="21">无</option>
+                    <option value="22">黄色</option>
+                    <option value="23">酒红色</option>
+                    <option value="24">金色</option>
+                    <option value="25">橙色</option>
+                    <option value="26" selected="selected">灰色</option>
+                    <option value="27">蓝色</option>
+                    <option value="28">黑色</option>
+                    <option value="29">卡其色</option>
+                    <option value="30">混色</option>
+                    <option value="31">紫色</option>
+                    <option value="32">粉红色</option>
+                    <option value="33">银色</option>
+                    <option value="34">红色</option>
+                    <option value="35">白色</option>
+                    <option value="36">浅蓝色</option>
+                    <option value="37">深蓝色</option>
+                    <option value="38">绿色</option>
+                    <option value="39">米黄色</option>
+                    <option value="40">咖啡色</option>
+                  </select></td>
+                <td class="specification_3"><select name="specification_3">
+                    <option value="41" selected="selected">均码</option>
+                    <option value="42">XXS</option>
+                    <option value="43">XS</option>
+                    <option value="44">S</option>
+                    <option value="45">M</option>
+                    <option value="46">L</option>
+                    <option value="47">XL</option>
+                    <option value="48">XXL</option>
+                    <option value="49">XXXL</option>
+                  </select></td>
+                <td class="specification_4"><select name="specification_4">
+                    <option value="50" selected="selected">均码</option>
+                    <option value="51">XXS</option>
+                    <option value="52">XS</option>
+                    <option value="53">S</option>
+                    <option value="54">M</option>
+                    <option value="55">L</option>
+                    <option value="56">XL</option>
+                    <option value="57">XXL</option>
+                    <option value="58">XXXL</option>
+                  </select></td>
+                <td class="specification_5 hidden"><select name="specification_5" disabled="disabled">
+                    <option value="59">34</option>
+                    <option value="60">35</option>
+                    <option value="61">36</option>
+                    <option value="62">37</option>
+                    <option value="63">38</option>
+                    <option value="64">39</option>
+                    <option value="65">40</option>
+                    <option value="66">41</option>
+                  </select></td>
+                <td class="specification_6 hidden"><select name="specification_6" disabled="disabled">
+                    <option value="67">36</option>
+                    <option value="68">37</option>
+                    <option value="69">38</option>
+                    <option value="70">39</option>
+                    <option value="71">40</option>
+                    <option value="72">41</option>
+                    <option value="73">42</option>
+                    <option value="74">43</option>
+                    <option value="75">44</option>
+                    <option value="76">45</option>
+                  </select></td>
+                <td> - </td>
+              </tr>
+            </tbody>
+          </table></td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="input">
+    <tbody>
+      <tr>
+        <th>&nbsp; </th>
+        <td><input type="submit" class="button" value="确定">
+          <input type="button" class="button" value="返回"></td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.sys.dao.LogDao">
+    
+	<select id="findList" resultType="Log">
+		SELECT 
+			a.*,a.abnormal_type AS "abnormalType",
+			u.id AS "createBy.id",
+			u.name AS "createBy.name",
+			u.login_name AS "createBy.loginName",
+			c.name AS "createBy.company.name",
+			o.name AS "createBy.office.name"
+		FROM sys_log a
+		LEFT JOIN sys_user u ON u.id = a.create_by
+		LEFT JOIN sys_office c ON c.id = u.company_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		WHERE a.create_date BETWEEN #{beginDate} AND #{endDate}
+		<if test="title != null and title != ''">
+			AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+		</if>
+		<if test="createBy != null and createBy.loginName != null and createBy.loginName != ''">
+			AND u.login_name = #{createBy.loginName}
+		</if>
+		<if test="requestUri != null and requestUri != ''">
+			AND a.request_uri LIKE 
+					<if test="dbName == 'oracle'">'%'||#{requestUri}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{requestUri}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{requestUri}, '%')</if>
+		</if>
+		<if test="abnormalType != null and abnormalType != ''">
+			AND a.abnormal_type = #{abnormalType}
+		</if>
+		<if test="logType != null and logType != ''">
+			AND a.log_type = #{logType}
+		</if>
+		
+		<if test="exception != null and exception != ''">
+			AND a.type = #{TYPE_EXCEPTION}
+		</if>
+		ORDER BY 
+		<if test="sortType==0">
+			a.create_date DESC
+		</if>
+		<if test="sortType==1">
+			u.login_name ASC
+		</if>
+		<if test="sortType==2">
+			u.login_name DESC
+		</if>
+		
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_log(
+			id,
+			object_ids,
+			update_begin,
+			update_after,
+			result_type,
+			info_describe,
+			log_type,
+			abnormal_type,
+			type, 
+			title,
+			create_by, 
+			create_date, 
+			remote_addr, 
+			user_agent, 
+			request_uri, 
+			method, 
+			params, 
+			exception
+		) VALUES (
+			#{id},
+			#{objectId},
+			#{updateBegin},
+			#{updateAfter},
+			#{resultType},
+			#{infoDescribe},
+			#{logType},
+			#{abnormalType},
+			#{type}, 
+			#{title}, 
+			#{createBy.id}, 
+			#{createDate}, 
+			#{remoteAddr}, 
+			#{userAgent}, 
+			#{requestUri}, 
+			#{method}, 
+			#{params}, 
+			#{exception}
+		)
+	</insert>
+	
+	<!-- 登录异常访问 -->
+	<select id="getLoginCount" resultType="Log">
+		SELECT count(1) AS "loginCount"
+		FROM sys_log a
+		LEFT JOIN sys_user u ON u.id = a.create_by
+		LEFT JOIN sys_office c ON c.id = u.company_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		WHERE a.create_date BETWEEN #{beginDate} AND #{endDate} AND a.abnormal_type = '1'
+		<if test="title != null and title != ''">
+			AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+		</if>
+		<if test="createBy != null and createBy.loginName != null and createBy.loginName != ''">
+			AND u.login_name = #{createBy.loginName}
+		</if>
+		<if test="logType != null and logType != ''">
+			AND a.log_type = #{logType}
+		</if>
+		<if test="requestUri != null and requestUri != ''">
+			AND a.request_uri LIKE 
+					<if test="dbName == 'oracle'">'%'||#{requestUri}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{requestUri}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{requestUri}, '%')</if>
+		</if>
+
+		<if test="exception != null and exception != ''">
+			AND a.type = #{TYPE_EXCEPTION}
+		</if>
+		group by a.abnormal_type
+	</select>
+	
+	
+	<!-- 越权访问访问 -->
+	<select id="getYqfwCount" resultType="Log">
+		SELECT count(1) AS "yqfwCount"
+		FROM sys_log a
+		LEFT JOIN sys_user u ON u.id = a.create_by
+		LEFT JOIN sys_office c ON c.id = u.company_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		WHERE a.create_date BETWEEN #{beginDate} AND #{endDate} AND a.abnormal_type = '2'
+		<if test="title != null and title != ''">
+			AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+		</if>
+		<if test="createBy != null and createBy.loginName != null and createBy.loginName != ''">
+			AND u.login_name = #{createBy.loginName}
+		</if>
+		<if test="logType != null and logType != ''">
+			AND a.log_type = #{logType}
+		</if>
+		<if test="requestUri != null and requestUri != ''">
+			AND a.request_uri LIKE 
+					<if test="dbName == 'oracle'">'%'||#{requestUri}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{requestUri}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{requestUri}, '%')</if>
+		</if>
+		
+		<if test="exception != null and exception != ''">
+			AND a.type = #{TYPE_EXCEPTION}
+		</if>
+		group by a.abnormal_type
+	</select>
+	
+	
+	
+	<!-- 一般异常 -->
+	<select id="getYbycCount" resultType="Log">
+		SELECT count(1) AS "ybycCount"
+		FROM sys_log a
+		LEFT JOIN sys_user u ON u.id = a.create_by
+		LEFT JOIN sys_office c ON c.id = u.company_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		WHERE a.create_date BETWEEN #{beginDate} AND #{endDate} AND a.abnormal_type = '3'
+		<if test="title != null and title != ''">
+			AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+		</if>
+		<if test="createBy != null and createBy.loginName != null and createBy.loginName != ''">
+			AND u.login_name = #{createBy.loginName}
+		</if>
+		<if test="logType != null and logType != ''">
+			AND a.log_type = #{logType}
+		</if>
+		<if test="requestUri != null and requestUri != ''">
+			AND a.request_uri LIKE 
+					<if test="dbName == 'oracle'">'%'||#{requestUri}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{requestUri}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{requestUri}, '%')</if>
+		</if>
+		
+		<if test="exception != null and exception != ''">
+			AND a.type = #{TYPE_EXCEPTION}
+		</if>
+		group by a.abnormal_type
+	</select>
+	
+	
+	<!-- ip异常 -->
+	<select id="getIpCount" resultType="Log">
+		SELECT count(1) AS "ipCount"
+		FROM sys_log a
+		LEFT JOIN sys_user u ON u.id = a.create_by
+		LEFT JOIN sys_office c ON c.id = u.company_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		WHERE a.create_date BETWEEN #{beginDate} AND #{endDate} AND a.abnormal_type = '4'
+		<if test="title != null and title != ''">
+			AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+		</if>
+		<if test="createBy != null and createBy.loginName != null and createBy.loginName != ''">
+			AND u.login_name = #{createBy.loginName}
+		</if>
+		<if test="logType != null and logType != ''">
+			AND a.log_type = #{logType}
+		</if>
+		<if test="requestUri != null and requestUri != ''">
+			AND a.request_uri LIKE 
+					<if test="dbName == 'oracle'">'%'||#{requestUri}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{requestUri}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{requestUri}, '%')</if>
+		</if>
+		
+		<if test="exception != null and exception != ''">
+			AND a.type = #{TYPE_EXCEPTION}
+		</if>
+		group by a.abnormal_type
+		
+	</select>
+	
+	
+	<!-- 正常 -->
+	<select id="getZcCount" resultType="Log">
+		SELECT count(1) AS "zcCount"
+		FROM sys_log a
+		LEFT JOIN sys_user u ON u.id = a.create_by
+		LEFT JOIN sys_office c ON c.id = u.company_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		WHERE a.create_date BETWEEN #{beginDate} AND #{endDate} AND a.abnormal_type = '5'
+		<if test="title != null and title != ''">
+			AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+		</if>
+		<if test="createBy != null and createBy.loginName != null and createBy.loginName != ''">
+			AND u.login_name = #{createBy.loginName}
+		</if>
+		<if test="logType != null and logType != ''">
+			AND a.log_type = #{logType}
+		</if>
+		<if test="requestUri != null and requestUri != ''">
+			AND a.request_uri LIKE 
+					<if test="dbName == 'oracle'">'%'||#{requestUri}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{requestUri}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{requestUri}, '%')</if>
+		</if>
+		
+		<if test="exception != null and exception != ''">
+			AND a.type = #{TYPE_EXCEPTION}
+		</if>
+		group by a.abnormal_type
+		
+	</select>
+	
+	<!-- 统计总日志数 -->
+	<select id="getTotalCount" resultType="Log">
+		SELECT count(1) AS "totalCount"
+		FROM sys_log a
+		LEFT JOIN sys_user u ON u.id = a.create_by
+		LEFT JOIN sys_office c ON c.id = u.company_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		WHERE a.create_date BETWEEN #{beginDate} AND #{endDate}
+		<if test="title != null and title != ''">
+			AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+		</if>
+		<if test="createBy != null and createBy.loginName != null and createBy.loginName != ''">
+			AND u.login_name = #{createBy.loginName}
+		</if>
+		<if test="logType != null and logType != ''">
+			AND a.log_type = #{logType}
+		</if>
+		<if test="requestUri != null and requestUri != ''">
+			AND a.request_uri LIKE 
+					<if test="dbName == 'oracle'">'%'||#{requestUri}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{requestUri}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{requestUri}, '%')</if>
+		</if>
+		
+		<if test="exception != null and exception != ''">
+			AND a.type = #{TYPE_EXCEPTION}
+		</if>
+		
+	</select>
+	
+</mapper>

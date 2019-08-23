@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.sys.dao.SysSessionManageDao">
+    
+	<sql id="sysSessionManageColumns">
+		a.id AS "id",
+		a.user_id AS "userId",
+		a.timeout AS "timeout",
+		a.online_count AS "onlineCount",
+		a.session_id AS "sessionId"
+	</sql>
+	
+	<sql id="sysSessionManageJoins">
+		
+	</sql>
+    
+	<select id="get" resultType="SysSessionManage">
+		SELECT 
+			<include refid="sysSessionManageColumns"/>
+		FROM sys_session_manage a
+		<include refid="sysSessionManageJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysSessionManage">
+		SELECT 
+			<include refid="sysSessionManageColumns"/>
+		FROM sys_session_manage a
+		<include refid="sysSessionManageJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysSessionManage">
+		SELECT 
+			<include refid="sysSessionManageColumns"/>
+		FROM sys_session_manage a
+		<include refid="sysSessionManageJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_session_manage(
+			id,
+			online_count,
+			user_id,
+			timeout,
+			session_id
+		) VALUES (
+			#{id},
+			#{onlineCount},
+			#{userId},
+			#{timeout},
+			#{sessionId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_session_manage SET 	
+			user_id = #{userId},
+			online_count = #{onlineCount},
+			timeout = #{timeout},
+			session_id = #{sessionId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_session_manage
+		WHERE user_id = #{userId}
+	</update>
+	
+</mapper>

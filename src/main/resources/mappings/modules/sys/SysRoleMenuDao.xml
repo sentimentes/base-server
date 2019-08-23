@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.sys.dao.SysRoleMenuDao">
+    
+	<sql id="sysRoleMenuColumns">
+		a.role_id AS "roleId",
+		a.menu_id AS "menuId"
+	</sql>
+	
+	<sql id="sysRoleMenuJoins">
+	</sql>
+    
+	<select id="get" resultType="SysRoleMenu">
+		SELECT 
+			<include refid="sysRoleMenuColumns"/>
+		FROM sys_role_menu a
+		<include refid="sysRoleMenuJoins"/>
+		WHERE a.role_id = #{roleId} and a.menu_id = #{menuId}
+	</select>
+	
+	<select id="findList" resultType="SysRoleMenu">
+		SELECT 
+			<include refid="sysRoleMenuColumns"/>
+		FROM sys_role_menu a
+		<include refid="sysRoleMenuJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysRoleMenu">
+		SELECT 
+			<include refid="sysRoleMenuColumns"/>
+		FROM sys_role_menu a
+		<include refid="sysRoleMenuJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_role_menu(
+			role_id,
+			menu_id
+		) VALUES (
+			#{roleId},
+			#{menuId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_role_menu SET 	
+			role_id = #{roleId},
+			menu_id = #{menuId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_role_menu
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

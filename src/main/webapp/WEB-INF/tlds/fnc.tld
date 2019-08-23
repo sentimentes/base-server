@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+  version="2.0">
+    
+  <description>JSTL 1.1 functions library</description>
+  <display-name>JSTL functions cms</display-name>
+  <tlib-version>1.1</tlib-version>
+  <short-name>fnc</short-name>
+  <uri>http://java.sun.com/jsp/jstl/functionsc</uri>
+
+  <!-- <function>
+    <description>获取分类列表</description>
+    <name>getMcProductCategoryList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getMcProductCategoryList()</function-signature>
+    <example>${fnc:getMcProductCategoryList()}</example>  
+  </function>
+    <function>
+    <description>获取字典对象列表</description>
+    <name>getDictList</name>
+    <function-class>com.wwls.modules.sys.utils.DictUtils</function-class>
+    <function-signature>java.util.List getDictList(java.lang.String)</function-signature>
+    <example>${fns:getDictList(type)}</example>  
+  </function>
+  <function>
+    <description>获取版权列表</description>
+    <name>getCopyrightRelList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getCopyrightRelList(java.lang.String)</function-signature>
+    <example>${fnc:getCopyrightRelList(resourceId)}</example>  
+  </function>
+  
+  <function>
+    <description>根据广告Id获取绑定商品</description>
+    <name>getBannerProductList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getBannerProductList()</function-signature>
+    <example>${fnc:getBannerProductList()}</example>  
+  </function>
+  
+   <function>
+    <description>根据广告Id获取绑定资讯</description>
+    <name>getBannerNewsList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getBannerNewsList()</function-signature>
+    <example>${fnc:getBannerNewsList()}</example>  
+  </function>
+   <function>
+    <description>根据广告Id获取栏目分类</description>
+    <name>getBannerColumnList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getBannerColumnList()</function-signature>
+    <example>${fnc:getBannerColumnList()}</example>  
+  </function>
+  
+     <function>
+    <description>根据广告Id获取栏目</description>
+    <name>getBannerShelvesList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getBannerShelvesList()</function-signature>
+    <example>${fnc:getBannerShelvesList()}</example>  
+  </function>
+   <function>
+    <description>查询未审核的作者</description>
+    <name>getAhthor</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getAhthor()</function-signature>
+    <example>${fnc:getAhthor()}</example>  
+  </function>
+  <function>
+    <description>查询未审核的版权</description>
+    <name>getCopyright</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getCopyright()</function-signature>
+    <example>${fnc:getCopyright()}</example>  
+  </function> -->
+   
+  
+  
+</taglib>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.sys.dao.SysUserRoleDao">
+    
+	<sql id="sysUserRoleColumns">
+		a.user_id AS "userId",
+		a.role_id AS "roleId"
+	</sql>
+	
+	<sql id="sysUserRoleJoins">
+		INNER JOIN sys_role_menu u ON u.role_id = a.role_id
+	</sql>
+    
+	<select id="get" resultType="SysUserRole">
+		SELECT 
+			<include refid="sysUserRoleColumns"/>
+		FROM sys_user_role a
+		<include refid="sysUserRoleJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysUserRole">
+		SELECT 
+			<include refid="sysUserRoleColumns"/>
+		FROM sys_user_role a
+		<include refid="sysUserRoleJoins"/>
+		<where>
+		a.user_id = #{userId}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysUserRole">
+		SELECT 
+			<include refid="sysUserRoleColumns"/>
+		FROM sys_user_role a
+		<include refid="sysUserRoleJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_user_role(
+			user_id,
+			role_id
+		) VALUES (
+			#{userId},
+			#{roleId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_user_role SET 	
+			user_id = #{userId},
+			role_id = #{roleId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_user_role
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

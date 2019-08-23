@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.sys.dao.SysPwdManageDao">
+    
+	<sql id="sysPwdManageColumns">
+		a.id AS "id",
+		a.login_name AS "loginName",
+		a.pwd AS "pwd"
+	</sql>
+	
+	<sql id="sysPwdManageJoins">
+	</sql>
+    
+	<select id="get" resultType="SysPwdManage">
+		SELECT 
+			<include refid="sysPwdManageColumns"/>
+		FROM sys_pwd_manage a
+		<include refid="sysPwdManageJoins"/>
+		WHERE a.login_name = #{loginName}
+	</select>
+	
+	<select id="findList" resultType="SysPwdManage">
+		SELECT 
+			<include refid="sysPwdManageColumns"/>
+		FROM sys_pwd_manage a
+		<include refid="sysPwdManageJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysPwdManage">
+		SELECT 
+			<include refid="sysPwdManageColumns"/>
+		FROM sys_pwd_manage a
+		<include refid="sysPwdManageJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_pwd_manage(
+			id,
+			login_name,
+			pwd
+		) VALUES (
+			#{id},
+			#{loginName},
+			#{pwd}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_pwd_manage SET 	
+			login_name = #{loginName},
+			pwd = #{pwd}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_pwd_manage
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

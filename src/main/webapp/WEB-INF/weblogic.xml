@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE weblogic-web-app PUBLIC "-//BEA Systems, Inc.//DTD Web Application 8.1//EN" "http://www.bea.com/servers/wls810/dtd/weblogic810-web-jar.dtd">
+<weblogic-web-app xmlns="http://www.bea.com/ns/weblogic/90" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <context-root>base-server</context-root>
+    <session-descriptor>
+    	<timeout-secs>-1</timeout-secs>
+        <cookie-name>JSESSIONIDSCHEDULE</cookie-name>
+        <cookie-path>/</cookie-path>
+    </session-descriptor>    
+
+    <jsp-descriptor>
+    
+   	<jsp-param> 
+   		
+		<param-name>compilerSupportsEncoding</param-name>
+		<param-value>true</param-value>
+	</jsp-param>
+	
+        <keepgenerated>true</keepgenerated>
+        <page-check-seconds>-1</page-check-seconds>
+        <precompile>true</precompile>
+        <precompile-continue>true</precompile-continue>
+    </jsp-descriptor>
+
+    <container-descriptor>
+        <optimistic-serialization>true</optimistic-serialization>        
+        <prefer-web-inf-classes>false</prefer-web-inf-classes>
+        <show-archived-real-path-enabled>true</show-archived-real-path-enabled>
+         <prefer-application-packages>  
+           <package-name>org.slf4j</package-name>
+           <package-name>org.apache.commons.io.*</package-name>  
+        </prefer-application-packages>
+<servlet-reload-check-secs>-1</servlet-reload-check-secs> 
+    </container-descriptor>        
+</weblogic-web-app>

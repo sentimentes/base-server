@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.shoppingmall.dao.goods.GsMenuValueDao">
+    
+	<sql id="gsMenuValueColumns">
+		a.id AS "id",
+		a.gs_id AS "gsId",
+		a.gs_menu_id AS "gsMenuId",
+		a.gs_menu_small_id AS "gsMenuSmallId",
+		a.name AS "name",
+		a.office_id AS "office.id",
+		a.sort AS "sort",
+		a.up_down_shelf AS "upDownShelf",
+		a.del_flag AS "delFlag",
+		o4.name AS "office.name"
+	</sql>
+	
+	<sql id="ggsMenuValueColumns">
+		a.id AS "id",
+		a.gs_menu_id AS "gsMenuId",
+		a.gs_id AS "gsId",
+		a.gs_menu_small_id AS "gsMenuSmallId",
+		a.name AS "name",
+		a.office_id AS "office.id",
+		a.sort AS "sort",
+		a.up_down_shelf AS "upDownShelf",
+		a.del_flag AS "delFlag",
+		b.sp_type1 AS "gsMenuName",
+		c.name AS "gsMenuSmallName",
+		o4.name AS "office.name"
+	</sql>
+	
+	<sql id="gsMenuValueJoins">
+		LEFT JOIN sys_office o4 ON o4.id = a.office_id
+	</sql>
+	
+	<sql id="ggsMenuValueJoins">
+		LEFT JOIN gs_menu b ON b.id = a.gs_menu_id
+	</sql>
+	
+	<sql id="gggsMenuValueJoins">
+		LEFT JOIN gs_menu_small c ON c.id = a.gs_menu_small_id
+	</sql>
+    
+	<select id="get" resultType="GsMenuValue">
+		SELECT 
+			<include refid="gsMenuValueColumns"/>
+		FROM gs_menu_value a
+		<include refid="gsMenuValueJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GsMenuValue">
+		SELECT 
+			<include refid="ggsMenuValueColumns"/>
+		FROM gs_menu_value a
+		<include refid="gsMenuValueJoins"/>
+		<include refid="ggsMenuValueJoins"/>
+		<include refid="gggsMenuValueJoins"/>
+		<where>
+			a.del_flag = '0'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="gsMenuId != null and gsMenuId != ''">
+				AND a.gs_menu_id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{gsMenuId}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{gsMenuId}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{gsMenuId},'%')</if>
+			</if>
+			<if test="gsMenuSmallId != null and gsMenuSmallId != ''">
+				AND a.gs_menu_small_id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{gsMenuSmallId}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{gsMenuSmallId}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{gsMenuSmallId},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GsMenuValue">
+		SELECT 
+			<include refid="ggsMenuValueColumns"/>
+		FROM gs_menu_value a
+		<include refid="gsMenuValueJoins"/>
+		<include refid="ggsMenuValueJoins"/>
+		<include refid="gggsMenuValueJoins"/>
+		<where>
+				a.del_flag = '0' and a.up_down_shelf = '1'
+			<if test="office != null and office != '' and office.id != null and office.id != ''">
+				AND a.office_id = #{office.id}
+			</if>
+			<if test="gsMenuId != null and gsMenuId != ''">
+				AND a.gs_menu_id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{gsMenuId}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{gsMenuId}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{gsMenuId},'%')</if>
+			</if>
+			<if test="gsMenuSmallId != null and gsMenuSmallId != ''">
+				AND a.gs_menu_small_id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{gsMenuSmallId}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{gsMenuSmallId}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{gsMenuSmallId},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO gs_menu_value(
+			id,
+			gs_menu_small_id,
+			name,
+			office_id,
+			sort,
+			up_down_shelf,
+			gs_menu_id,
+			gs_id,
+			del_flag
+		) VALUES (
+			#{id},
+			#{gsMenuSmallId},
+			#{name},
+			#{office.id},
+			#{sort},
+			#{upDownShelf},
+			#{gsMenuId},
+			#{gsId},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE gs_menu_value SET 	
+			gs_menu_id = #{gsMenuId},
+			gs_menu_small_id = #{gsMenuSmallId},
+			name = #{name},
+			office_id = #{office.id},
+			sort = #{sort},
+			gs_id = #{gsId},
+			up_down_shelf = #{upDownShelf}
+		WHERE id = #{id}
+	</update>
+	<update id="delete">
+		UPDATE gs_menu_value SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 批量上下架 -->
+	<update id="upDownShelf">
+		UPDATE gs_menu_value 
+		SET up_down_shelf = #{upDownShelf}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 批量修改排序 -->
+	<update id="updateSort">
+		UPDATE gs_menu_value 
+		SET sort = #{sort}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

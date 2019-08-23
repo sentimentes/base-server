@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwls.modules.shoppingmall.dao.goods.GsUserDao">
+    
+	<sql id="gsUserColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.password AS "password",
+		a.ji_fei AS "jiFei",
+		a.phone AS "phone",
+		a.sex AS "sex",
+		a.bei_fei AS "beiFei",
+		a.office_id AS "office.id",
+		a.del_flag AS "delFlag",
+		a.email AS "email",
+		a.birthday AS "birthday",
+		a.image AS "image",
+		a.password_one AS "passwordOne",
+		a.password_two AS "passwordTwo",
+		a.answer_one AS "answerOne",
+		a.answer_two AS "answerTwo",
+		o8.name AS "office.name"
+	</sql>
+	
+	<sql id="gsUserJoins">
+		LEFT JOIN sys_office o8 ON o8.id = a.office_id
+	</sql>
+    
+	<select id="get" resultType="GsUser">
+		SELECT 
+			<include refid="gsUserColumns"/>
+		FROM gs_user a
+		<include refid="gsUserJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="GsUser">
+		SELECT 
+			<include refid="gsUserColumns"/>
+		FROM gs_user a
+		<include refid="gsUserJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name = #{name}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="GsUser">
+		SELECT 
+			<include refid="gsUserColumns"/>
+		FROM gs_user a
+		<include refid="gsUserJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO gs_user(
+			id,
+			name,
+			password,
+			ji_fei,
+			phone,
+			sex,
+			email,
+			birthday,
+			bei_fei,
+			image,
+			office_id,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{password},
+			#{jiFei},
+			#{phone},
+			#{sex},
+			#{email},
+			#{birthday},
+			#{beiFei},
+			#{image},
+			#{office.id},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE gs_user SET 	
+			phone = #{phone},
+			email = #{email},
+			birthday = #{birthday},
+			sex = #{sex},
+			image = #{image},
+			office_id = #{office.id}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<update id="upPassword">
+		UPDATE gs_user SET 	
+			password = #{password}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE gs_user SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="answerSave">
+		UPDATE gs_user SET 
+		password_one = #{passwordOne},
+		password_two = #{passwordTwo},
+		answer_one = #{answerOne},
+		answer_two = #{answerTwo}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

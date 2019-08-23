@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+  version="2.0">
+    
+  <description>JSTL 1.1 functions library</description>
+  <display-name>JSTL functions sys</display-name>
+  <tlib-version>1.1</tlib-version>
+  <short-name>fns</short-name>
+  <uri>http://java.sun.com/jsp/jstl/functionss</uri>
+
+  <function>
+    <description>获取管理路径</description>
+    <name>getAdminPath</name>
+    <function-class>com.wwls.common.config.Global</function-class>
+    <function-signature>java.lang.String getAdminPath()</function-signature>
+    <example>${fns:getAdminPath()}</example>
+  </function>
+  <function>
+    <description>获取网站路径</description>
+    <name>getFrontPath</name>
+    <function-class>com.wwls.common.config.Global</function-class>
+    <function-signature>java.lang.String getFrontPath()</function-signature>
+    <example>${fns:getFrontPath()}</example>
+  </function>
+  <function>
+    <description>获取网站URL后缀</description>
+    <name>getUrlSuffix</name>
+    <function-class>com.wwls.common.config.Global</function-class>
+    <function-signature>java.lang.String getUrlSuffix()</function-signature>
+    <example>${fns:getUrlSuffix()}</example>
+  </function>
+  <function>
+    <description>获取配置</description>
+    <name>getConfig</name>
+    <function-class>com.wwls.common.config.Global</function-class>
+    <function-signature>java.lang.String getConfig(java.lang.String)</function-signature>
+    <example>${fns:getConfig(key)}</example>
+  </function>
+  <function>
+    <description>获取常量</description>
+    <name>getConst</name>
+    <function-class>com.wwls.common.config.Global</function-class>
+    <function-signature>java.lang.Object getConst(java.lang.String)</function-signature>
+    <example>${fns:getConst(key)}</example>
+  </function>
+  
+  <!-- UserUtils -->
+  <function>
+    <description>获取当前用户对象</description>
+    <name>getUser</name>
+    <function-class>com.wwls.modules.sys.utils.UserUtils</function-class>
+    <function-signature>com.wwls.modules.sys.entity.User getUser()</function-signature>
+    <example>${fns:getUser()}</example>  
+  </function>
+  <function>
+    <description>获取当前用户是否平台运营管理员</description>
+    <name>getAdmin</name>
+    <function-class>com.wwls.modules.sys.utils.UserUtils</function-class>
+    <function-signature>com.wwls.modules.sys.entity.User getAdmin()</function-signature>
+    <example>${fns:getAdmin()}</example>  
+  </function>
+  <function>
+    <description>根据编码获取用户对象</description>
+    <name>getUserById</name>
+    <function-class>com.wwls.modules.sys.utils.UserUtils</function-class>
+    <function-signature>com.wwls.modules.sys.entity.User get(java.lang.String)</function-signature>
+    <example>${fns:getUserById(id)}</example>  
+  </function>
+  
+  <function>
+    <description>获取授权用户信息</description>
+    <name>getPrincipal</name>
+    <function-class>com.wwls.modules.sys.utils.UserUtils</function-class>
+    <function-signature>com.wwls.modules.sys.security.SystemAuthorizingRealm.Principal getPrincipal()</function-signature>
+    <example>${fns:getPrincipal()}</example>  
+  </function>
+  
+  <function>
+    <description>获取当前用户的菜单对象列表</description>
+    <name>getMenuList</name>
+    <function-class>com.wwls.modules.sys.utils.UserUtils</function-class>
+    <function-signature>java.util.List getMenuList()</function-signature>
+    <example>${fns:getMenuList()}</example>  
+  </function>
+  
+  <function>
+    <description>获取当前用户的区域对象列表</description>
+    <name>getAreaList</name>
+    <function-class>com.wwls.modules.sys.utils.UserUtils</function-class>
+    <function-signature>java.util.List getAreaList()</function-signature>
+    <example>${fns:getAreaList()}</example>  
+  </function>
+  
+  <function>
+    <description>获取当前用户的部门对象列表</description>
+    <name>getOfficeList</name>
+    <function-class>com.wwls.modules.sys.utils.UserUtils</function-class>
+    <function-signature>java.util.List getOfficeList()</function-signature>
+    <example>${fns:getOfficeList()}</example>  
+  </function>
+  
+  <function>
+    <description>获取当前用户缓存</description>
+    <name>getCache</name>
+    <function-class>com.wwls.modules.sys.utils.UserUtils</function-class>
+    <function-signature>java.lang.Object getCache(java.lang.String, java.lang.Object)</function-signature>
+    <example>${fns:getCache(cacheName, defaultValue)}</example>  
+  </function>
+	
+  <!-- DictUtils -->
+  <function>
+    <description>获取字典标签</description>
+    <name>getDictLabel</name>
+    <function-class>com.wwls.modules.sys.utils.DictUtils</function-class>
+    <function-signature>java.lang.String getDictLabel(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:getDictLabel(value, type, defaultValue)}</example>  
+  </function>
+  
+  <function>
+    <description>获取字典标签(多个)</description>
+    <name>getDictLabels</name>
+    <function-class>com.wwls.modules.sys.utils.DictUtils</function-class>
+    <function-signature>java.lang.String getDictLabels(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:getDictLabels(values, type, defaultValue)}</example>  
+  </function>
+
+  <function>
+    <description>获取字典值</description>
+    <name>getDictValue</name>
+    <function-class>com.wwls.modules.sys.utils.DictUtils</function-class>
+    <function-signature>java.lang.String getDictValue(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:getDictValue(label, type, defaultValue)}</example>  
+  </function>
+  
+  <function>
+    <description>获取字典对象列表</description>
+    <name>getDictList</name>
+    <function-class>com.wwls.modules.sys.utils.DictUtils</function-class>
+    <function-signature>java.util.List getDictList(java.lang.String)</function-signature>
+    <example>${fns:getDictList(type)}</example>  
+  </function>
+  
+  <function>
+    <description>获取字典对象列表</description>
+    <name>getDictListJson</name>
+    <function-class>com.wwls.modules.sys.utils.DictUtils</function-class>
+    <function-signature>java.lang.String getDictListJson(java.lang.String)</function-signature>
+    <example>${fns:getDictListJson(type)}</example>  
+  </function>
+  
+  <!-- Encodes -->
+  <function>
+    <description>URL编码</description>
+    <name>urlEncode</name>
+    <function-class>com.wwls.common.utils.Encodes</function-class>
+    <function-signature>java.lang.String urlEncode(java.lang.String)</function-signature>
+    <example>${fns:urlEncode(part)}</example>  
+  </function>
+  <function>
+    <description>URL解码</description>
+    <name>urlDecode</name>
+    <function-class>com.wwls.common.utils.Encodes</function-class>
+    <function-signature>java.lang.String urlDecode(java.lang.String)</function-signature>
+    <example>${fns:urlDecode(part)}</example>  
+  </function>
+  <function>
+    <description>HTML编码</description>
+    <name>escapeHtml</name>
+    <function-class>com.wwls.common.utils.Encodes</function-class>
+    <function-signature>java.lang.String escapeHtml(java.lang.String)</function-signature>
+    <example>${fns:escapeHtml(html)}</example>  
+  </function>
+  <function>
+    <description>HTML解码</description>
+    <name>unescapeHtml</name>
+    <function-class>com.wwls.common.utils.Encodes</function-class>
+    <function-signature>java.lang.String unescapeHtml(java.lang.String)</function-signature>
+    <example>${fns:unescapeHtml(html)}</example>  
+  </function>
+  
+  <!-- StringUtils -->
+  <function>
+    <description>从后边开始截取字符串</description>
+    <name>substringAfterLast</name>
+    <function-class>org.apache.commons.lang3.StringUtils</function-class>
+    <function-signature>java.lang.String substringAfterLast(java.lang.String, java.lang.String)</function-signature>
+    <example>${fns:substringAfterLast(str,separator)}</example>  
+  </function>
+  <function>
+    <description>判断字符串是否以某某开头</description>
+    <name>startsWith</name>
+    <function-class>org.apache.commons.lang3.StringUtils</function-class>
+    <function-signature>boolean startsWith(java.lang.CharSequence, java.lang.CharSequence)</function-signature>
+    <example>${fns:startsWith(str,prefix)}</example> 
+  </function>
+  <function>
+    <description>判断字符串是否以某某结尾</description>
+    <name>endsWith</name>
+    <function-class>org.apache.commons.lang3.StringUtils</function-class>
+    <function-signature>boolean endsWith(java.lang.CharSequence, java.lang.CharSequence)</function-signature>
+    <example>${fns:endsWith(str,suffix)}</example> 
+  </function>
+  <function>
+    <description>缩写字符串，超过最大宽度用“...”表示</description>
+    <name>abbr</name>
+    <function-class>com.wwls.common.utils.StringUtils</function-class>
+    <function-signature>java.lang.String abbr(java.lang.String, int)</function-signature>
+    <example>${fns:abbr(str,length)}</example>  
+  </function>
+  <function>
+    <description>替换掉HTML标签</description>
+    <name>replaceHtml</name>
+    <function-class>com.wwls.common.utils.StringUtils</function-class>
+    <function-signature>java.lang.String replaceHtml(java.lang.String)</function-signature>
+    <example>${fns:replaceHtml(html)}</example>  
+  </function>
+  <function>
+    <description>转换为JS获取对象值，生成三目运算返回结果。</description>
+    <name>jsGetVal</name>
+    <function-class>com.wwls.common.utils.StringUtils</function-class>
+    <function-signature>java.lang.String jsGetVal(java.lang.String)</function-signature>
+    <example>${fns:jsGetVal('row.user.id')}  返回：!row?'':!row.user?'':!row.user.id?'':row.user.id</example>  
+  </function>
+  
+  <!-- DateUtils -->
+  <function>
+    <description>获取当前日期</description>
+    <name>getDate</name>
+    <function-class>com.wwls.common.utils.DateUtils</function-class>
+    <function-signature>java.lang.String getDate(java.lang.String)</function-signature>
+    <example>${fns:getDate(pattern)}</example>  
+  </function>
+  <function>
+    <description>获取过去的天数</description>
+    <name>pastDays</name>
+    <function-class>com.wwls.common.utils.DateUtils</function-class>
+    <function-signature>long pastDays(java.util.Date)</function-signature>
+    <example>${fns:pastDays(date)}</example>  
+  </function>
+  
+  <!-- JsonMapper -->
+  <function>
+    <description>对象转换JSON字符串</description>
+    <name>toJson</name>
+    <function-class>com.wwls.common.mapper.JsonMapper</function-class>
+    <function-signature>java.lang.String toJsonString(java.lang.Object)</function-signature>
+    <example>${fns:toJson(object)}</example>  
+  </function>
+  
+   <!-- 获取品牌信息列表 -->
+  <function>
+    <description>获取品牌信息列表</description>
+    <name>getMcProductBrandList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getMcProductBrandList()</function-signature>
+    <example>${fns:getMcProductBrandList()}</example>  
+  </function>
+  
+   <!-- 获取热门活动信息列表 -->
+  <function>
+    <description>获取热门活动信息列表 </description>
+    <name>getSpecialList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getSpecialList()</function-signature>
+    <example>${fns:getSpecialList()}</example>  
+  </function>
+  
+  
+   <!-- 获取兑换码信息列表 -->
+  <function>
+    <description>获取兑换码信息列表</description>
+    <name>getCodeList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getCodeList(java.lang.String)</function-signature>
+    <example>${fns:getCodeList(msgId)}</example>  
+  </function>
+  
+  <!-- 获取品牌信息列表 -->
+  <function>
+    <description>获取品牌信息列表</description>
+    <name>getElCompanyList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getElCompanyList()</function-signature>
+    <example>${fns:getElCompanyList()}</example>  
+  </function>
+  
+  <!-- 获取品牌信息列表 -->
+  <function>
+    <description>获取品牌信息列表</description>
+    <name>getOfficeNameList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getOfficeNameList()</function-signature>
+    <example>${fns:getOfficeNameList()}</example>  
+  </function>
+  
+   <!-- 获取我来评论栏目信息列表 -->
+  <function>
+    <description>获取我来评论栏目信息列表</description>
+    <name>getColumnNameList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getColumnNameList()</function-signature>
+    <example>${fns:getColumnNameList()}</example>  
+  </function>
+  
+  <!-- 获取商品分类信息列表 -->
+  <function>
+    <description>获取商品分类信息列表</description>
+    <name>getMcProductCategoryList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getMcProductCategoryList()</function-signature>
+    <example>${fns:getMcProductCategoryList()}</example>  
+  </function>
+    <!-- 获取某个公司下面子公司列表 -->
+      <function>
+    <description>获取某个公司下面子公司列表</description>
+    <name>getCompanyList</name>
+    <function-class>com.wwls.modules.sys.utils.OfficeUtils</function-class>
+    <function-signature>java.util.List getCompanyList(java.lang.String)</function-signature>
+    <example>${fns:getCompanyList(id)}</example>  
+  </function>
+  
+  
+  
+      <!-- 获取某个公司下面部门列表 -->
+      <function>
+    <description>获取某个公司下面子部门列表</description>
+    <name>getDeparmentList</name>
+    <function-class>com.wwls.modules.sys.utils.OfficeUtils</function-class>
+    <function-signature>java.util.List getDeparmentList()</function-signature>
+    <example>${fns:getDeparmentList()}</example>  
+  </function>
+  <!-- 获属性可选项列表 -->
+  <function>
+    <description>获属性可选项列表</description>
+    <name>getAttributeOptionList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getAttributeOptionList(java.lang.String)</function-signature>
+    <example>${fns:getAttributeOptionList(attributeId)}</example>  
+  </function>
+  
+    <!-- 获规格可选项列表 -->
+  <function>
+    <description>获规格可选项列表</description>
+    <name>getSpecificationOptionList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getSpecificationOptionList(java.lang.String)</function-signature>
+    <example>${fns:getSpecificationOptionList(optionId)}</example>  
+  </function>
+  
+  <!-- 获规格可选项列表查看 -->
+  <function>
+    <description>获规格可选项列表</description>
+    <name>getSpecificationOptionsList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getSpecificationOptionsList(java.lang.String,java.lang.String)</function-signature>
+    <example>${fns:getSpecificationOptionsList(optionId,productId)}</example>  
+  </function>
+   <!-- 获取国家列表 -->
+   <function>
+    <description>获取国家列表</description>
+    <name>getDicCountryList</name>
+    <function-class>com.wwls.modules.sys.utils.CountryUtils</function-class>
+    <function-signature>java.util.List getDicCountryList()</function-signature>
+    <example>${fns:getDicCountryList()}</example>  
+  </function>
+  <!-- 获取栏目分类 -->
+  <function>
+    <description>获取栏目分类列表</description>
+    <name>getColumnList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getColumnList(java.lang.String)</function-signature>
+    <example>${fns:getColumnList(type)}</example>  
+  </function>
+  <!-- 获取资讯分类 -->
+  <function>
+    <description>获取资讯分类列表</description>
+    <name>getNewsCategoryist</name>
+    <function-class>com.wwls.modules.application.utils.ApplicationsUtils</function-class>
+    <function-signature>java.util.List getNewsCategoryist()</function-signature>
+    <example>${fns:getNewsCategoryist()}</example>  
+  </function>
+  
+    <!-- 获取广告分类列表 -->
+  <function>
+    <description>获取广告分类列表</description>
+    <name>getBannerCategoryUtils</name>
+    <function-class>com.wwls.modules.application.utils.ApplicationsUtils</function-class>
+    <function-signature>java.util.List getBannerCategoryUtils()</function-signature>
+    <example>${fns:getBannerCategoryUtils()}</example>  
+  </function>
+  
+  
+  <!-- 根据机构id获取商品信息列表 -->
+  <function>
+    <description>根据机构id获取商品信息列表</description>
+    <name>getGoodsInfoByOfficeId</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getGoodsInfoByOfficeId()</function-signature>
+    <example>${fns:getGoodsInfoByOfficeId()}</example>  
+  </function>
+  
+  <!-- 获取物流公司信息列表 -->
+  <function>
+    <description>获取物流公司信息列表</description>
+    <name>getDeliveryCorpList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getDeliveryCorpList()</function-signature>
+    <example>${fns:getDeliveryCorpList()}</example>  
+  </function>
+  
+   <!-- 获取配送方式信息列表 -->
+  <function>
+    <description>获取配送方式信息列表</description>
+    <name>getShippingMethodList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getShippingMethodList()</function-signature>
+    <example>${fns:getShippingMethodList()}</example>  
+  </function>
+  
+   <!-- 获取app信息列表 -->
+  <function>
+    <description>获取app信息列表</description>
+    <name>getAppInfoList</name>
+    <function-class>com.wwls.modules.application.utils.ApplicationsUtils</function-class>
+    <function-signature>java.util.List getAppInfoList()</function-signature>
+    <example>${fns:getAppInfoList()}</example>  
+  </function>
+    <!-- 根据ID获取app信息-->
+  <function>
+    <description>获取app信息列表</description>
+    <name>getAppInfo</name>
+    <function-class>com.wwls.modules.application.utils.ApplicationsUtils</function-class>
+    <function-signature>java.lang.String getAppInfo(java.lang.String)</function-signature>
+    <example>${fns:getAppInfo(appid)}</example>  
+  </function>
+     <!-- 获取app信息列表 -->
+  <function>
+    <description>获取当前机构app信息列表</description>
+    <name>getMyAppInfoList</name>
+    <function-class>com.wwls.modules.application.utils.ApplicationsUtils</function-class>
+    <function-signature>java.util.List getMyAppInfoList()</function-signature>
+    <example>${fns:getMyAppInfoList()}</example>  
+  </function>
+ 
+   <!-- 获取资源目录列表 -->
+  <function>
+    <description>获取资源目录列表</description>
+    <name>getResourceCatalogList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getResourceCatalogList(java.lang.String)</function-signature>
+    <example>${fns:getResourceCatalogList(resourceId)}</example>  
+  </function>
+  
+   <!-- 获取出版社列表 -->
+  <function>
+    <description>获取出版社列表</description>
+    <name>getPublishList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getPublishList()</function-signature>
+    <example>${fns:getPublishList()}</example>
+  </function>
+  
+  <!-- 获取机构列表 -->
+  <function>
+    <description>获取机构列表</description>
+    <name>getOfficeNamesList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getOfficeNamesList()</function-signature>
+    <example>${fns:getOfficeNamesList()}</example>
+  </function>
+  
+  
+   <!-- 获取接口菜单列表 -->
+  <function>
+    <description>获取接口菜单列表</description>
+    <name>getMenueList</name>
+    <function-class>com.wwls.modules.application.utils.ApplicationsUtils</function-class>
+    <function-signature>java.util.List getMenueList()</function-signature>
+    <example>${fns:getMenueList()}</example>
+  </function>
+  
+
+  
+   <!-- 获取VIP分类下所有绑定子分类的商品 -->
+  <function>
+    <description>获取VIP分类下所有绑定子分类的商品列表</description>
+    <name>getVipProductList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getVipProductList(java.lang.String)</function-signature>
+    <example>${fns:getVipProductList(categoryId)}</example>  
+  </function>
+  
+<!-- 获取商品 -->
+  <function>
+    <description>获取商品列表</description>
+    <name>getMcProduct</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getMcProduct()</function-signature>
+    <example>${fns:getMcProduct()}</example>  
+  </function>
+  <!-- 获取资讯 -->
+  <function>
+    <description>获取资讯列表</description>
+    <name>getNewsList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getNewsList()</function-signature>
+    <example>${fns:getNewsList()}</example>  
+  </function>
+  
+    <!-- 获取京东资源池列表 -->
+  <function>
+    <description>获取京东资源池列表</description>
+    <name>getJingDongResourcePool</name>
+    <function-class>com.wwls.modules.jingdong.utils.JingDongUIUtils</function-class>
+    <function-signature>java.util.List getJingDongResourcePool()</function-signature>
+    <example>${fns:getJingDongResourcePool()}</example>
+  </function>
+
+ <!-- 获取工会栏目列表 -->
+  <function>
+    <description>获取工会栏目列表</description>
+    <name>getLuColumnList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getLuColumnList()</function-signature>
+    <example>${fns:getLuColumnList()}</example>  
+  </function>
+  
+  <!-- 获取工会众筹列表 -->
+  <function>
+    <description>获取工会众筹列表</description>
+    <name>getLuCrowdfunList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getLuCrowdfunList()</function-signature>
+    <example>${fns:getLuCrowdfunList()}</example>  
+  </function>
+  
+    <!-- 获取会议类型列表 -->
+  <function>
+    <description>获取会议类型列表</description>
+    <name>getMeetingTypeList</name>
+    <function-class>com.wwls.modules.application.utils.ApplicationsUtils</function-class>
+    <function-signature>java.util.List getMeetingTypeList()</function-signature>
+    <example>${fns:getMeetingTypeList()}</example>  
+  </function>
+  
+    <!-- 获取试题分类列表 -->
+  <function>
+    <description>获取试题分类列表</description>
+    <name>findQuesstionTypeList</name>
+    <function-class>com.wwls.modules.partybuilding.utils.PartyBuildingUtils</function-class>
+    <function-signature>java.util.List findQuesstionTypeList()</function-signature>
+    <example>${fns:findQuesstionTypeList()}</example>  
+  </function>
+   <!-- 获取民主评测试卷列表 -->
+  <function>
+    <description>获取民主评测试卷列表</description>
+    <name>findEvaluationPaperList</name>
+    <function-class>com.wwls.modules.partybuilding.utils.PartyBuildingUtils</function-class>
+    <function-signature>java.util.List findEvaluationPaperList()</function-signature>
+    <example>${fns:findEvaluationPaperList()}</example>  
+  </function>
+  <!-- 获取支部列表 -->
+  <function>
+    <description>获取支部列表 </description>
+    <name>findPbBranchList</name>
+    <function-class>com.wwls.modules.partybuilding.utils.PartyBuildingUtils</function-class>
+    <function-signature>java.util.List findPbBranchList()</function-signature>
+    <example>${fns:findPbBranchList()}</example>  
+  </function>
+  
+   <!-- 获取小组列表 -->
+  <function>
+    <description>获取小组列表 </description>
+    <name>findPbGroupList</name>
+    <function-class>com.wwls.modules.partybuilding.utils.PartyBuildingUtils</function-class>
+    <function-signature>java.util.List findPbGroupList(java.lang.String)</function-signature>
+    <example>${fns:findPbGroupList(branchId)}</example>  
+  </function>
+  <!-- 获取考试试卷列表 -->
+  <function>
+    <description>获取考试试卷列表</description>
+    <name>findExamPaperList</name>
+    <function-class>com.wwls.modules.partybuilding.utils.PartyBuildingUtils</function-class>
+    <function-signature>java.util.List findExamPaperList(java.lang.String)</function-signature>
+    <example>${fns:findExamPaperList(examType)}</example>  
+  </function>
+  
+  
+  <!-- 获取支部列表 -->
+  <function>
+    <description>获取文体协会分类列表 </description>
+    <name>findCategoryList</name>
+    <function-class>com.wwls.modules.partybuilding.utils.PartyBuildingUtils</function-class>
+    <function-signature>java.util.List findCategoryList()</function-signature>
+    <example>${fns:findCategoryList()}</example>  
+  </function>
+  
+  
+   <!-- 获取电力部门信息列表 -->
+  <function>
+    <description>获取电力部门信息列表</description>
+    <name>getElDepartmentList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getElDepartmentList()</function-signature>
+    <example>${fns:getElDepartmentList()}</example>  
+  </function>
+  
+  <!-- 获取电力部门信息列表 -->
+  <function>
+    <description>获取联系人信息列表</description>
+    <name>getLinkmanList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getLinkmanList()</function-signature>
+    <example>${fns:getLinkmanList()}</example>  
+  </function>
+  
+   <!-- 获取电力食堂信息列表 -->
+  <function>
+    <description>获取电力食堂信息列表</description>
+    <name>getElCanteenList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getElCanteenList()</function-signature>
+    <example>${fns:getElCanteenList()}</example>  
+  </function>
+  
+   <!-- 获取电力问题分类信息列表 -->
+  <function>
+    <description>获取电力文体分类信息列表</description>
+    <name>getElCategoryList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getElCategoryList()</function-signature>
+    <example>${fns:getElCategoryList()}</example>  
+  </function>
+  
+  
+    <!-- 获取渠道信息列表 -->
+  <function>
+    <description>获取渠道信息列表</description>
+    <name>getChannelList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>java.util.List getChannelList()</function-signature>
+    <example>${fns:getChannelList()}</example>
+  </function>
+  
+  
+   <!-- 获取试题分类信息列表 -->
+  <function>
+    <description>获取试题分类信息列表</description>
+    <name>getList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getList()</function-signature>
+    <example>${fns:getList()}</example>  
+  </function>
+  
+    <!-- 获取电力食堂信息列表 -->
+  <function>
+    <description>获取电力食堂信息列表</description>
+    <name>getWhiteList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getWhiteList()</function-signature>
+    <example>${fns:getWhiteList()}</example>  
+  </function>
+  
+    <!-- 获取电力食堂信息列表 -->
+  <function>
+    <description>获取资讯栏目信息列表</description>
+    <name>getColumnNamesList</name>
+    <function-class>com.wwls.modules.product.web.utils.CategoryUtils</function-class>
+    <function-signature>ljava.util.List getColumnNamesList()</function-signature>
+    <example>${fns:getColumnNamesList()}</example>  
+  </function>
+  
+</taglib>
